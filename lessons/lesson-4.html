@@ -1,15 +1,334 @@
 <div class="lesson-header">
   <div class="lesson-badge"><span class="dot" style="background:#10b981"></span>Week 4 of 10</div>
   <h2>Arrays</h2>
-  <p class="desc">1D and 2D arrays, traversal, common algorithms, and the Arrays utility class.</p>
+  <p class="desc">One variable can hold one value — but what if you have 30 test scores? Arrays let you store a whole list of values under a single name, then loop through them. Learn to create, index, iterate, and spot the classic off-by-one trap.</p>
   <div class="lesson-stats">
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Lecture: <strong>~40 min</strong></span></div>
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Exercise: <strong>~15 min</strong></span></div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Lecture: <strong>~40 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span>Exercise: <strong>~15 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Topics: <strong>create · index · .length · iterate · patterns · 2D</strong></span>
+    </div>
   </div>
 </div>
-<div class="coming-soon">
-  <div class="cs-num">04</div>
-  <h3>Coming Soon</h3>
-  <p>1D and 2D arrays, traversal, common algorithms, and the Arrays utility class.</p>
-  <div class="cs-topics"><span class="cs-topic">Declaring arrays</span><span class="cs-topic">Traversal</span><span class="cs-topic">Min / Max / Sum</span><span class="cs-topic">2D arrays</span><span class="cs-topic">Arrays.sort()</span></div>
-</div>
+
+<div class="lesson-content">
+
+  <!-- ── 4.1 CREATING ARRAYS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 1 — Creating Arrays</div>
+
+    <p class="body">Think of an array as a row of numbered lockers, all the same type, sitting next to each other. Each locker holds one value, and every locker has a number — its <strong>index</strong> — so you can find it again. Instead of <code class="il">score1</code>, <code class="il">score2</code>, <code class="il">score3</code>… you make one array and use its index.</p>
+
+    <h3 class="topic">Making an Empty Array with <code>new</code></h3>
+    <p class="body">One way is to ask for a fixed number of empty slots using <code class="il">new</code>. Java fills a fresh number array with <code class="il">0</code>s automatically, ready for you to fill in:</p>
+    <pre><code class="language-java">int[] scores = new int[4];   // room for 4 ints, all start at 0
+
+System.out.println("Length: " + scores.length);
+System.out.println("Before: " + scores[0] + " " + scores[1] + " " + scores[2] + " " + scores[3]);
+
+scores[0] = 90;
+scores[1] = 85;
+System.out.println("After:  " + scores[0] + " " + scores[1] + " " + scores[2] + " " + scores[3]);</code></pre>
+
+    <h3 class="topic">Array Literals — values right away</h3>
+    <p class="body">If you already know the values, list them inside <code class="il">{ }</code> and Java counts them for you — no need to say how many. Arrays can hold any single type: <code class="il">int</code>, <code class="il">double</code>, <code class="il">String</code>, and more.</p>
+    <pre><code class="language-java">int[] ages = {12, 13, 11, 14};
+String[] names = {"Mia", "Leo", "Ava"};
+
+System.out.println("There are " + ages.length + " ages");
+System.out.println("First name: " + names[0]);
+System.out.println("Last name: " + names[names.length - 1]);</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 One type per array</div>
+      <p>An array holds values of <strong>one</strong> type only — an <code>int[]</code> can't hold text, and a <code>String[]</code> can't hold numbers. Its size is also fixed once created: an array of 4 always has exactly 4 slots. (Need a list that grows? That's <code>ArrayList</code>, coming in Lesson 10.)</p>
+    </div>
+  </div>
+
+  <!-- ── 4.2 INDEXING & LENGTH ── -->
+  <div class="content-section">
+    <div class="section-label">Part 2 — Indexing &amp; .length</div>
+
+    <p class="body">Here's the rule that trips up everyone at first: <strong>indexes start at 0, not 1</strong>. The first element is at index <code class="il">0</code>, the second at <code class="il">1</code>, and so on. So in an array of 5 items, the valid indexes are 0, 1, 2, 3, 4 — the <em>last</em> index is always <code class="il">length - 1</code>.</p>
+
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th>Index →</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+      <tr class="hl"><th>Value</th><td>10</td><td>20</td><td>30</td><td>40</td><td>50</td></tr>
+    </table>
+
+    <p class="body">Every array knows its own size through <code class="il">.length</code> (notice: no parentheses — it's not a method). Use it to always find the last element safely:</p>
+    <pre><code class="language-java">int[] nums = {10, 20, 30, 40, 50};
+
+System.out.println("Length is " + nums.length);
+System.out.println("First element (index 0): " + nums[0]);
+System.out.println("Third element (index 2): " + nums[2]);
+
+int lastIndex = nums.length - 1;   // last index is length - 1, never length
+System.out.println("Last element (index " + lastIndex + "): " + nums[lastIndex]);</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Off-by-one &amp; out-of-bounds</div>
+      <p>An array of length 5 has <strong>no</strong> index 5 — the slots are 0 to 4. Asking for <code>nums[5]</code> crashes with <code>ArrayIndexOutOfBoundsException</code>. The fix is the same golden rule you saw with loops: stop at <code>i &lt; length</code>, never <code>i &lt;= length</code>.</p>
+    </div>
+  </div>
+
+  <!-- ── 4.3 READ & WRITE ── -->
+  <div class="content-section">
+    <div class="section-label">Part 3 — Reading &amp; Writing Elements</div>
+
+    <p class="body">You use the same <code class="il">array[index]</code> syntax for both jobs: on the <em>right</em> of an <code class="il">=</code> it <strong>reads</strong> the value; on the <em>left</em> it <strong>writes</strong> (overwrites) it. Swapping two elements needs a temporary holder so you don't lose a value.</p>
+    <pre><code class="language-java">int[] box = {1, 2, 3};
+
+box[1] = 99;          // write: overwrite the value at index 1
+System.out.println("After change: " + box[0] + " " + box[1] + " " + box[2]);
+
+// Swap the first and last using a temporary holder
+int temp = box[0];
+box[0] = box[2];
+box[2] = temp;
+System.out.println("After swap:   " + box[0] + " " + box[1] + " " + box[2]);</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Why the temp variable?</div>
+      <p>If you wrote <code>box[0] = box[2]</code> then <code>box[2] = box[0]</code>, you'd lose the original first value — it got overwritten in step one, so both slots end up the same. The <code>temp</code> holder remembers it just long enough to finish the trade.</p>
+    </div>
+  </div>
+
+  <!-- ── 4.4 ITERATING ── -->
+  <div class="content-section">
+    <div class="section-label">Part 4 — Iterating Over Arrays</div>
+
+    <p class="body">The real power of arrays shows up when you pair them with a loop — now one chunk of code can handle 4 items or 4,000. There are two common ways.</p>
+
+    <h3 class="topic">Classic for — when you need the index</h3>
+    <p class="body">Counting from <code class="il">0</code> up to <code class="il">length - 1</code> visits every element and gives you the index <code class="il">i</code> to use:</p>
+    <pre><code class="language-java">int[] temps = {18, 21, 25, 19};
+
+for (int i = 0; i < temps.length; i++) {
+    System.out.println("Day " + (i + 1) + ": " + temps[i] + "°C");
+}</code></pre>
+
+    <h3 class="topic">for-each — when you just want the values</h3>
+    <p class="body">If you don't care about positions, the for-each loop is shorter and safer (no index to get wrong):</p>
+    <pre><code class="language-java">String[] fruits = {"apple", "banana", "cherry"};
+
+for (String fruit : fruits) {
+    System.out.println("I like " + fruit);
+}</code></pre>
+  </div>
+
+  <!-- ── 4.5 COMMON PATTERNS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 5 — Common Array Patterns</div>
+
+    <p class="body">A handful of patterns come up again and again. Learn these four and you'll recognise them everywhere.</p>
+
+    <h3 class="topic">Sum &amp; Average</h3>
+    <p class="body">Keep a running <code class="il">sum</code> that starts at 0, add each element, then divide by <code class="il">length</code> for the average. Cast to <code class="il">double</code> so you don't lose the decimals:</p>
+    <pre><code class="language-java">int[] marks = {70, 85, 90, 60, 95};
+
+int sum = 0;
+for (int mark : marks) {
+    sum += mark;
+}
+double average = (double) sum / marks.length;
+
+System.out.println("Sum: " + sum);
+System.out.println("Average: " + average);</code></pre>
+
+    <h3 class="topic">Max &amp; Min</h3>
+    <p class="body">Start by <em>assuming</em> the first element is both the biggest and smallest, then let the loop correct you whenever it finds something better:</p>
+    <pre><code class="language-java">int[] data = {42, 17, 89, 5, 63};
+
+int max = data[0];   // assume the first is the biggest...
+int min = data[0];   // ...and the smallest, for now
+for (int n : data) {
+    if (n > max) {
+        max = n;
+    }
+    if (n < min) {
+        min = n;
+    }
+}
+System.out.println("Largest:  " + max);
+System.out.println("Smallest: " + min);</code></pre>
+
+    <h3 class="topic">Search &amp; Count</h3>
+    <p class="body">To <strong>search</strong>, walk the array and remember the index where you found your target (start at <code class="il">-1</code> to mean "not found"). To <strong>count</strong>, keep a tally and bump it up whenever an element matches a rule:</p>
+    <pre><code class="language-java">int[] values = {4, 8, 15, 16, 23, 42};
+int target = 15;
+
+int foundAt = -1;        // -1 means "not found yet"
+int evenCount = 0;
+for (int i = 0; i < values.length; i++) {
+    if (values[i] == target) {
+        foundAt = i;
+    }
+    if (values[i] % 2 == 0) {
+        evenCount++;
+    }
+}
+System.out.println("Found " + target + " at index " + foundAt);
+System.out.println("Even numbers: " + evenCount);</code></pre>
+
+    <!-- Interactive Demo: Array Inspector -->
+    <div class="demo-wrap" style="margin-top:24px;">
+      <div class="demo-header">
+        <div class="demo-dot" style="background:#ef4444"></div>
+        <div class="demo-dot" style="background:#f59e0b;margin-left:4px"></div>
+        <div class="demo-dot" style="background:#10b981;margin-left:4px"></div>
+        <span class="label" style="margin-left:8px">Interactive — Array Inspector</span>
+      </div>
+      <div class="demo-body">
+        <p>Type a list of numbers, then peek at any index. See the index/value layout, length, and the sum/average/max/min patterns all at once — and what happens when you ask for an index that doesn't exist.</p>
+        <div class="form-row">
+          <label>Numbers:</label>
+          <input class="demo-input" id="arr-values" type="text" value="5, 12, 8, 3, 20" style="width:180px"/>
+          <label>Access index:</label>
+          <input class="demo-input" id="arr-index" type="number" value="2" style="width:70px"/>
+          <button class="run-btn" onclick="runArrayDemo()">Inspect ▶</button>
+        </div>
+        <div class="demo-result" id="arr-result">Click Inspect to break the array down...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 4.6 2D ARRAYS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 6 — A Peek at 2D Arrays</div>
+
+    <p class="body">Sometimes a single row isn't enough — think of a chessboard, a spreadsheet, or a game map. A <strong>2D array</strong> is an "array of arrays": a grid with <em>rows</em> and <em>columns</em>. You use <strong>two</strong> indexes — <code class="il">grid[row][col]</code> — and two nested loops to walk it.</p>
+    <pre><code class="language-java">int[][] grid = {
+    {1, 2, 3},
+    {4, 5, 6}
+};
+
+System.out.println("Rows: " + grid.length);           // 2 rows
+System.out.println("Columns: " + grid[0].length);     // 3 columns
+System.out.println("Middle of row 1: " + grid[1][1]); // the value 5
+
+// Walk the whole grid: outer loop = rows, inner loop = columns
+for (int row = 0; row < grid.length; row++) {
+    for (int col = 0; col < grid[row].length; col++) {
+        System.out.print(grid[row][col] + " ");
+    }
+    System.out.println();   // new line after each row
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Read it as [row][column]</div>
+      <p>The first index picks the row, the second picks the column within that row — always in that order. <code>grid[1][1]</code> means "row 1, column 1." 2D arrays power grids, tic-tac-toe boards, images (rows of pixels), and much more.</p>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE ── -->
+  <div class="content-section">
+    <div class="section-label">Exercise — 15 Minutes</div>
+    <div class="exercise-header">
+      <span class="ex-icon">⌨️</span>
+      <span class="ex-label">Coding Challenge</span>
+      <span class="ex-time">⏱ ~15 min</span>
+    </div>
+    <div class="exercise-section">
+
+      <div class="exercise-task">
+        <p><strong>Task 1 — Print It Backwards</strong><br/>
+        Given <code>int[] nums = {1, 2, 3, 4, 5};</code>, use a loop to print the elements from last to first: <code>5 4 3 2 1</code>. Don't create a second array — just loop in reverse.</p>
+        <p style="font-size:.82rem;color:#6b7280;margin-top:6px;"><em>Hint: start your counter at the last index and count down.</em></p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h4-1')">Show hint</button>
+      <div class="hint-box" id="h4-1">
+        <p>Loop <code>for (int i = nums.length - 1; i &gt;= 0; i--)</code> and print <code>nums[i]</code> each time. Start at <code>length - 1</code> (the last index) and stop at <code>0</code>.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 2 — Above Average</strong><br/>
+        For <code>int[] marks = {70, 85, 90, 60, 95};</code>, first work out the average, then count how many marks are <em>above</em> that average and print the count.</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h4-2')">Show hint</button>
+      <div class="hint-box" id="h4-2">
+        <p>This needs <strong>two passes</strong>: one loop to add everything up for the average (remember <code>(double)</code> the sum), then a second loop with <code>if (marks[i] &gt; average) count++;</code>.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 3 — Largest and Where</strong><br/>
+        For <code>int[] data = {42, 17, 89, 5, 63};</code>, find the largest value <em>and</em> the index it lives at. Print both, like <code>Largest 89 at index 2</code>.</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h4-3')">Show hint</button>
+      <div class="hint-box" id="h4-3">
+        <p>Track two variables: <code>max</code> and <code>maxIndex</code>. When you find a bigger value at index <code>i</code>, update <strong>both</strong> — <code>max = data[i];</code> and <code>maxIndex = i;</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div class="content-section quiz-section">
+    <div class="section-label">Quick Check — 5 Questions</div>
+    <div class="q-list">
+
+      <div class="q-item">
+        <h4>1. What is the index of the <strong>first</strong> element in a Java array?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,true)"><code>0</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>1</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>-1</code></button>
+          <button class="q-opt" onclick="qa(this,false)">It depends on the array</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>2. For <code class="il">int[] a = {10, 20, 30};</code>, what does <code class="il">a.length</code> give?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>2</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>3</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>30</code></button>
+          <button class="q-opt" onclick="qa(this,false)">Error — length needs parentheses</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>3. An array has length 5. Which is the <strong>last</strong> valid index?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>5</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>4</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>6</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>1</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>4. What happens when you access <code class="il">a[5]</code> on an array of length 5?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">It returns 0</button>
+          <button class="q-opt" onclick="qa(this,false)">It returns the last element</button>
+          <button class="q-opt" onclick="qa(this,true)">It crashes with ArrayIndexOutOfBoundsException</button>
+          <button class="q-opt" onclick="qa(this,false)">It grows the array by one</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>5. You need both the <strong>value and its index</strong> while looping. Which loop fits best?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">A for-each loop: <code>for (int n : a)</code></button>
+          <button class="q-opt" onclick="qa(this,true)">A classic for loop: <code>for (int i = 0; i &lt; a.length; i++)</code></button>
+          <button class="q-opt" onclick="qa(this,false)">A do-while loop</button>
+          <button class="q-opt" onclick="qa(this,false)">Any loop — they all give you the index</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /lesson-content -->

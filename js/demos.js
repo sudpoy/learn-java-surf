@@ -95,6 +95,55 @@ function runLoopTrace() {
   el.textContent = lines.join('\n');
 }
 
+// ─── LESSON 4 DEMO: ARRAY INSPECTOR ───
+// Parses a comma-separated list into an array, then shows the index/value
+// layout plus the sum/average/max/min patterns, and demonstrates a safe
+// vs out-of-bounds index access.
+function runArrayDemo() {
+  const raw    = document.getElementById('arr-values').value;
+  const idxRaw = document.getElementById('arr-index').value;
+  const el     = document.getElementById('arr-result');
+
+  const parts = raw.split(',').map(s => s.trim()).filter(s => s.length > 0);
+  const arr = parts.map(s => parseInt(s, 10));
+  if (arr.length === 0 || arr.some(n => isNaN(n))) {
+    el.textContent = '⚠ Enter whole numbers separated by commas, e.g. 5, 12, 8.';
+    return;
+  }
+
+  let sum = 0, max = arr[0], min = arr[0];
+  for (const n of arr) {
+    sum += n;
+    if (n > max) max = n;
+    if (n < min) min = n;
+  }
+  const avg = Math.round((sum / arr.length) * 100) / 100;
+
+  const width = Math.max(...arr.map(n => String(n).length), 2);
+  const pad = s => String(s).padStart(width);
+  const idxRow = 'Index:  ' + arr.map((_, i) => pad(i)).join('  ');
+  const valRow = 'Value:  ' + arr.map(n => pad(n)).join('  ');
+
+  const idx = parseInt(idxRaw, 10);
+  let access;
+  if (isNaN(idx)) {
+    access = 'Enter an index to access an element.';
+  } else if (idx >= 0 && idx < arr.length) {
+    access = `arr[${idx}] = ${arr[idx]}   ✓ valid`;
+  } else {
+    access = `arr[${idx}] → ArrayIndexOutOfBoundsException!\n              Valid indexes are 0 to ${arr.length - 1} only.`;
+  }
+
+  el.textContent =
+    idxRow + '\n' + valRow + '\n\n' +
+    `length  = ${arr.length}   (valid indexes 0 to ${arr.length - 1})\n` +
+    `sum     = ${sum}\n` +
+    `average = ${avg}\n` +
+    `max     = ${max}\n` +
+    `min     = ${min}\n\n` +
+    `Access:  ${access}`;
+}
+
 // ─── DEMO 1: TYPE CASTING EXPLORER ───
 function runCast() {
   const v = parseFloat(document.getElementById('cast-val').value);
