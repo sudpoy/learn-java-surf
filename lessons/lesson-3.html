@@ -1,15 +1,331 @@
 <div class="lesson-header">
   <div class="lesson-badge"><span class="dot" style="background:#06b6d4"></span>Week 3 of 10</div>
   <h2>Loops</h2>
-  <p class="desc">for, while, do-while, enhanced for-each, break/continue, nested loops, and common loop patterns.</p>
+  <p class="desc">Stop copy-pasting the same line over and over. Loops let your program repeat work automatically — learn while, do-while, for, the for-each loop, and how to steer them with break and continue.</p>
   <div class="lesson-stats">
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Lecture: <strong>~40 min</strong></span></div>
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Exercise: <strong>~15 min</strong></span></div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Lecture: <strong>~40 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span>Exercise: <strong>~15 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Topics: <strong>while · do-while · for · for-each · break/continue</strong></span>
+    </div>
   </div>
 </div>
-<div class="coming-soon">
-  <div class="cs-num">03</div>
-  <h3>Coming Soon</h3>
-  <p>for, while, do-while, enhanced for-each, break/continue, nested loops, and common loop patterns.</p>
-  <div class="cs-topics"><span class="cs-topic">for loop</span><span class="cs-topic">while</span><span class="cs-topic">do-while</span><span class="cs-topic">for-each</span><span class="cs-topic">break / continue</span><span class="cs-topic">Nested loops</span></div>
-</div>
+
+<div class="lesson-content">
+
+  <!-- ── 3.1 WHILE ── -->
+  <div class="content-section">
+    <div class="section-label">Part 1 — The while Loop</div>
+
+    <p class="body">Imagine telling a friend "keep bouncing the ball <em>while</em> it stays on the table." They check the condition, do the action, and check again — over and over — until the condition is no longer true. That's exactly what a <code class="il">while</code> loop does: it repeats a block of code <strong>as long as</strong> its condition stays <code class="il">true</code>.</p>
+
+    <h3 class="topic">Basic Structure</h3>
+    <p class="body">Java checks the condition <em>first</em>. If it's true, the body runs; then it checks again. The moment the condition becomes false, the loop stops and the program continues below it. Something inside the loop must eventually make the condition false — otherwise it never ends.</p>
+    <pre><code class="language-java">int count = 5;
+
+while (count > 0) {
+    System.out.println(count);
+    count--;            // this is what eventually ends the loop
+}
+
+System.out.println("Liftoff!");</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Read it out loud</div>
+      <p>"<strong>While</strong> count is greater than 0, print it and subtract 1." Each trip through the loop is called an <strong>iteration</strong>. This loop iterates 5 times (count = 5, 4, 3, 2, 1), then stops when count hits 0.</p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ The forgotten update = infinite loop</div>
+      <p>If you remove <code>count--</code>, count stays 5 forever, <code>count &gt; 0</code> is always true, and the loop never stops. We'll come back to these "infinite loops" at the end — they're the #1 loop bug.</p>
+    </div>
+  </div>
+
+  <!-- ── 3.2 DO-WHILE ── -->
+  <div class="content-section">
+    <div class="section-label">Part 2 — The do-while Loop</div>
+
+    <p class="body">A <code class="il">do-while</code> loop is a <code class="il">while</code> loop's twin with one key difference: it runs the body <strong>first</strong>, then checks the condition. This guarantees the body runs <em>at least once</em>, even if the condition was false from the start. Think of a menu that always shows once before asking "do you want to go again?"</p>
+
+    <h3 class="topic">Runs At Least Once</h3>
+    <p class="body">Notice the condition below is false immediately — yet the body still runs one time, because the check happens at the bottom:</p>
+    <pre><code class="language-java">int number = 10;
+
+do {
+    System.out.println("Number is " + number);
+    number--;
+} while (number > 12);   // false right away — but the body already ran
+
+System.out.println("See? The body ran once anyway.");</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 while vs do-while — which do I pick?</div>
+      <p>Use <code>while</code> when the body might need to run <strong>zero</strong> times (check first). Use <code>do-while</code> when it should always run <strong>at least once</strong> (act first, then decide whether to repeat) — like asking a player for a move before checking if the game is over.</p>
+    </div>
+  </div>
+
+  <!-- ── 3.3 FOR ── -->
+  <div class="content-section">
+    <div class="section-label">Part 3 — The for Loop</div>
+
+    <p class="body">When you know <em>how many times</em> you want to repeat something — or you're counting through a range — the <code class="il">for</code> loop is the cleanest choice. It packs three things onto one line: where to <strong>start</strong>, when to <strong>stop</strong>, and how to <strong>step</strong> each time.</p>
+
+    <h3 class="topic">The Three Parts</h3>
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th>Part</th><th>Example</th><th>What it does</th></tr>
+      <tr><td>Initialization</td><td><code>int i = 1</code></td><td>Runs <strong>once</strong> at the very start — sets up the counter</td></tr>
+      <tr class="hl"><td>Condition</td><td><code>i &lt;= 5</code></td><td>Checked <strong>before every</strong> iteration — loop runs while it's true</td></tr>
+      <tr><td>Update</td><td><code>i++</code></td><td>Runs <strong>after every</strong> iteration — moves the counter along</td></tr>
+    </table>
+    <pre><code class="language-java">for (int i = 1; i <= 5; i++) {
+    System.out.println("i is " + i);
+}</code></pre>
+
+    <h3 class="topic">Counting in Different Ways</h3>
+    <p class="body">The three parts are flexible. You can count <em>down</em>, or step by more than one. Here we count down from 10 to 0, two at a time:</p>
+    <pre><code class="language-java">for (int i = 10; i >= 0; i -= 2) {
+    System.out.print(i + " ");
+}
+System.out.println();   // finish with a clean new line</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 for and while are interchangeable</div>
+      <p>Any <code>for</code> loop can be rewritten as a <code>while</code> loop and vice-versa. <code>for</code> just keeps the start, stop, and step neatly in one place, so it's harder to forget the update. Use <code>for</code> for counting; use <code>while</code> when you don't know the number of repeats in advance.</p>
+    </div>
+  </div>
+
+  <!-- ── 3.4 FOR-EACH ── -->
+  <div class="content-section">
+    <div class="section-label">Part 4 — The Enhanced for-each Loop</div>
+
+    <p class="body">Often you don't care about a counter at all — you just want to visit <em>every item</em> in a list. The <strong>for-each</strong> loop does exactly that: it hands you one element at a time, with no index to manage and no chance of going out of bounds. (You'll learn all about arrays next lesson — for now, just know <code class="il">{ }</code> makes a list of values.)</p>
+
+    <h3 class="topic">Visiting Every Item</h3>
+    <p class="body">Read the <code class="il">:</code> as the word "in" — "for each score <strong>in</strong> scores":</p>
+    <pre><code class="language-java">int[] scores = {85, 92, 78, 99, 60};
+
+int total = 0;
+for (int score : scores) {
+    System.out.println("Score: " + score);
+    total += score;
+}
+System.out.println("Total: " + total);</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ for-each has no index</div>
+      <p>The for-each loop is perfect for reading every item, but it doesn't give you a position number, and you can't easily change the items inside it. When you need the index (or want to modify elements), use a classic <code>for</code> loop with <code>scores[i]</code>.</p>
+    </div>
+  </div>
+
+  <!-- ── 3.5 BREAK & CONTINUE ── -->
+  <div class="content-section">
+    <div class="section-label">Part 5 — break and continue</div>
+
+    <p class="body">Sometimes you need to steer a loop mid-flight. Two keywords let you do that: <code class="il">break</code> jumps <strong>out</strong> of the loop entirely, and <code class="il">continue</code> skips the rest of the current turn and jumps straight to the <strong>next</strong> one.</p>
+
+    <h3 class="topic">break — stop early</h3>
+    <p class="body">Once you've found what you're looking for, why keep searching? <code class="il">break</code> ends the loop immediately:</p>
+    <pre><code class="language-java">int[] numbers = {4, 8, 15, 16, 23, 42};
+
+for (int n : numbers) {
+    if (n == 16) {
+        System.out.println("Found 16! Stopping the search.");
+        break;          // leave the loop right now
+    }
+    System.out.println("Checking " + n + "... not it");
+}</code></pre>
+
+    <h3 class="topic">continue — skip this one</h3>
+    <p class="body"><code class="il">continue</code> doesn't end the loop — it just abandons the current iteration and moves on. Here we skip the even numbers and only print the odd ones:</p>
+    <pre><code class="language-java">for (int i = 1; i <= 10; i++) {
+    if (i % 2 == 0) {
+        continue;       // even number — skip the print below
+    }
+    System.out.println(i + " is odd");
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 break leaves, continue skips</div>
+      <p>Easy way to remember: <strong>break</strong> = "I'm done, get me out of here." <strong>continue</strong> = "skip the rest of this lap, start the next one." In nested loops, both only affect the <em>innermost</em> loop they sit in.</p>
+    </div>
+  </div>
+
+  <!-- ── 3.6 NESTED LOOPS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 6 — Nested Loops</div>
+
+    <p class="body">You can put a loop <em>inside</em> another loop. The outer loop is like the rows of a grid, and the inner loop fills in the columns of each row. For every single turn of the outer loop, the inner loop runs all the way through.</p>
+
+    <h3 class="topic">A Multiplication Grid</h3>
+    <p class="body">The outer loop picks a row (1, 2, 3); the inner loop walks across the columns and prints <code class="il">row × col</code>. The <code class="il">\t</code> is a tab, lining the numbers up into a neat grid:</p>
+    <pre><code class="language-java">for (int row = 1; row <= 3; row++) {
+    for (int col = 1; col <= 3; col++) {
+        System.out.print(row * col + "\t");
+    }
+    System.out.println();   // new line after each row finishes
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Nested loops multiply the work</div>
+      <p>A 3×3 nest runs the inner body 9 times. A 100×100 nest runs it 10,000 times. Nesting is powerful for grids and tables, but the work grows fast — keep an eye on how big your numbers get.</p>
+    </div>
+  </div>
+
+  <!-- ── 3.7 INFINITE LOOPS & OFF-BY-ONE ── -->
+  <div class="content-section">
+    <div class="section-label">Part 7 — Infinite Loops &amp; Off-by-One</div>
+
+    <p class="body">Two mistakes trip up every new programmer. Knowing them now saves you hours of head-scratching later.</p>
+
+    <h3 class="topic">Off-by-One: the boundary trap</h3>
+    <p class="body">List positions (indexes) start at <strong>0</strong>, so a list of 3 items has indexes 0, 1, and 2 — there is no index 3. Using <code class="il">&lt;</code> with <code class="il">length</code> visits exactly the valid positions. Using <code class="il">&lt;=</code> would step one too far and crash:</p>
+    <pre><code class="language-java">int[] letters = {10, 20, 30};
+
+// CORRECT: i < length stops at the last valid index (2)
+for (int i = 0; i < letters.length; i++) {
+    System.out.println("Index " + i + " = " + letters[i]);
+}
+
+// Using  i <= letters.length  would try letters[3], which does not
+// exist, and crash with ArrayIndexOutOfBoundsException.</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Infinite loops — when the loop never ends</div>
+      <p>An infinite loop happens when the condition can never become false. The usual cause is forgetting to update the counter (<code>i++</code>), or updating it the wrong way (<code>i--</code> when you meant <code>i++</code>). Always ask: "what makes this loop eventually stop?" Try the demo below and set the step to <strong>0</strong> to see one.</p>
+    </div>
+
+    <!-- Interactive Demo: Loop Tracer -->
+    <div class="demo-wrap" style="margin-top:24px;">
+      <div class="demo-header">
+        <div class="demo-dot" style="background:#ef4444"></div>
+        <div class="demo-dot" style="background:#f59e0b;margin-left:4px"></div>
+        <div class="demo-dot" style="background:#10b981;margin-left:4px"></div>
+        <span class="label" style="margin-left:8px">Interactive — Loop Tracer</span>
+      </div>
+      <div class="demo-body">
+        <p>Pick a start, end, and step, then watch a <code>for</code> loop run one iteration at a time — including the final check that stops it. Set the step to 0 to trigger an infinite loop warning.</p>
+        <div class="form-row">
+          <label>From:</label>
+          <input class="demo-input" id="loop-from" type="number" value="1" style="width:70px"/>
+          <label>To:</label>
+          <input class="demo-input" id="loop-to" type="number" value="5" style="width:70px"/>
+          <label>Step:</label>
+          <input class="demo-input" id="loop-step" type="number" value="1" style="width:70px"/>
+          <button class="run-btn" onclick="runLoopTrace()">Trace ▶</button>
+        </div>
+        <div class="demo-result" id="loop-result">Click Trace to step through the loop...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE ── -->
+  <div class="content-section">
+    <div class="section-label">Exercise — 15 Minutes</div>
+    <div class="exercise-header">
+      <span class="ex-icon">⌨️</span>
+      <span class="ex-label">Coding Challenge</span>
+      <span class="ex-time">⏱ ~15 min</span>
+    </div>
+    <div class="exercise-section">
+
+      <div class="exercise-task">
+        <p><strong>Task 1 — Sum 1 to 100</strong><br/>
+        Use a loop to add up every whole number from 1 to 100 and print the total. Then change it to sum only the <em>even</em> numbers. The full total should come out to 5050.</p>
+        <p style="font-size:.82rem;color:#6b7280;margin-top:6px;"><em>Hint: keep a running total in a variable that starts at 0, and add the loop counter to it each time.</em></p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h3-1')">Show hint</button>
+      <div class="hint-box" id="h3-1">
+        <p>Start with <code>int total = 0;</code> then loop <code>for (int i = 1; i &lt;= 100; i++) total += i;</code>. For evens only, add an <code>if (i % 2 == 0)</code> inside, or step by 2 with <code>i += 2</code> starting from 2.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 2 — Times Table</strong><br/>
+        Ask for (or pick) a number, then use a <code>for</code> loop to print its times table from 1 to 12 — like <code>7 x 1 = 7</code>, <code>7 x 2 = 14</code>, and so on.</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h3-2')">Show hint</button>
+      <div class="hint-box" id="h3-2">
+        <p>Loop <code>i</code> from 1 to 12 and print <code>n + " x " + i + " = " + (n * i)</code>. Wrap the multiplication in parentheses so Java does the maths before joining the text.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 3 — Find the Largest</strong><br/>
+        Given <code>int[] nums = {3, 7, 2, 9, 4};</code>, use a loop to find and print the biggest number (it's 9) — without sorting. Try it once with a for-each loop.</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h3-3')">Show hint</button>
+      <div class="hint-box" id="h3-3">
+        <p>Keep a variable <code>max</code> starting at the first value (or a very small number). For each item, if it's bigger than <code>max</code>, update <code>max</code>. After the loop, <code>max</code> holds the largest.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div class="content-section quiz-section">
+    <div class="section-label">Quick Check — 5 Questions</div>
+    <div class="q-list">
+
+      <div class="q-item">
+        <h4>1. Which loop always runs its body <strong>at least once</strong>, even if the condition is false?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>while</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>do-while</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>for</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>for-each</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>2. How many times does the body run? <code class="il">for (int i = 0; i &lt; 5; i++)</code></h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">4 times</button>
+          <button class="q-opt" onclick="qa(this,true)">5 times</button>
+          <button class="q-opt" onclick="qa(this,false)">6 times</button>
+          <button class="q-opt" onclick="qa(this,false)">Forever — it's infinite</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>3. What does <code class="il">break</code> do inside a loop?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">Skips the current iteration and continues with the next</button>
+          <button class="q-opt" onclick="qa(this,true)">Exits the loop immediately</button>
+          <button class="q-opt" onclick="qa(this,false)">Restarts the loop from the beginning</button>
+          <button class="q-opt" onclick="qa(this,false)">Pauses the loop for one second</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>4. What does <code class="il">continue</code> do inside a loop?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">Exits the loop immediately</button>
+          <button class="q-opt" onclick="qa(this,true)">Skips the rest of this iteration and jumps to the next one</button>
+          <button class="q-opt" onclick="qa(this,false)">Ends the whole program</button>
+          <button class="q-opt" onclick="qa(this,false)">Counts the loop up by one</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>5. A list has 3 items (indexes 0, 1, 2). Which loop visits every item <strong>without</strong> crashing?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>for (int i = 0; i &lt;= list.length; i++)</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>for (int i = 0; i &lt; list.length; i++)</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>for (int i = 1; i &lt; list.length; i++)</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>for (int i = 3; i &gt; 0; i--)</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /lesson-content -->

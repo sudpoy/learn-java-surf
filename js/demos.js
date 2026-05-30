@@ -38,6 +38,63 @@ function runGrade() {
     `\nResult: Grade ${grade} — ${msg}`;
 }
 
+// ─── LESSON 3 DEMO: LOOP TRACER ───
+// Traces a for (i = from; i <= to; i += step) loop one iteration at a time,
+// showing each condition check, and warns about infinite / zero-run loops.
+function runLoopTrace() {
+  const from = parseInt(document.getElementById('loop-from').value, 10);
+  const to   = parseInt(document.getElementById('loop-to').value, 10);
+  const step = parseInt(document.getElementById('loop-step').value, 10);
+  const el   = document.getElementById('loop-result');
+
+  if (isNaN(from) || isNaN(to) || isNaN(step)) {
+    el.textContent = '⚠ Enter whole numbers for From, To, and Step.';
+    return;
+  }
+
+  const header = `for (int i = ${from}; i <= ${to}; i += ${step})`;
+
+  // Infinite loop: a non-positive step can never push i past `to` when it
+  // starts at or below it — the condition stays true forever.
+  if (step <= 0 && from <= to) {
+    el.textContent =
+      `${header}\n\n` +
+      `⚠ INFINITE LOOP!\n` +
+      `Step is ${step}, so i never grows past ${to}.\n` +
+      `The condition i <= ${to} stays true forever — this loop never ends.\n\n` +
+      `Fix: use a step of 1 or more so i keeps climbing toward ${to}.`;
+    return;
+  }
+
+  const lines = [header, ''];
+  const printed = [];
+  let i = from, iterations = 0;
+  const CAP = 50;
+
+  while (i <= to && iterations < CAP) {
+    lines.push(`  i = ${i}\t(${i} <= ${to}? ✓)  → print ${i}`);
+    printed.push(i);
+    iterations++;
+    i += step;
+  }
+
+  if (iterations >= CAP) {
+    lines.push(`  … stopped after ${CAP} iterations (demo limit)`);
+  } else {
+    // The check that finally fails and ends the loop.
+    lines.push(`  i = ${i}\t(${i} <= ${to}? ✗)  → stop`);
+  }
+
+  lines.push('');
+  if (iterations === 0) {
+    lines.push(`Loop ran 0 times — ${from} is already past ${to}, so the body never runs.`);
+  } else {
+    lines.push(`Loop ran ${iterations} time${iterations === 1 ? '' : 's'}. Printed: ${printed.join(' ')}`);
+  }
+
+  el.textContent = lines.join('\n');
+}
+
 // ─── DEMO 1: TYPE CASTING EXPLORER ───
 function runCast() {
   const v = parseFloat(document.getElementById('cast-val').value);
