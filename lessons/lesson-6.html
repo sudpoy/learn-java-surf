@@ -1,15 +1,429 @@
 <div class="lesson-header">
   <div class="lesson-badge"><span class="dot" style="background:#ef4444"></span>Week 6 of 10</div>
   <h2>Recursion</h2>
-  <p class="desc">Base cases, the call stack, and classic recursive patterns.</p>
+  <p class="desc">A method that calls itself. It sounds like magic (or a trick question), but recursion is just a method solving a big problem by handing a slightly smaller version of it to a copy of itself — until the problem gets so small the answer is obvious. Learn the base case, the recursive case, and how the call stack makes it all work.</p>
   <div class="lesson-stats">
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Lecture: <strong>~40 min</strong></span></div>
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Exercise: <strong>~15 min</strong></span></div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Lecture: <strong>~40 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span>Exercise: <strong>~15 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Topics: <strong>base case · recursive case · call stack · factorial · Fibonacci · stack overflow</strong></span>
+    </div>
   </div>
 </div>
-<div class="coming-soon">
-  <div class="cs-num">06</div>
-  <h3>Coming Soon</h3>
-  <p>Base cases, the call stack, and classic recursive patterns.</p>
-  <div class="cs-topics"><span class="cs-topic">Base case</span><span class="cs-topic">Call stack</span><span class="cs-topic">Factorial</span><span class="cs-topic">Fibonacci</span><span class="cs-topic">Palindrome</span></div>
-</div>
+
+<div class="lesson-content">
+
+  <!-- ── 6.1 WHAT IS RECURSION ── -->
+  <div class="content-section">
+    <div class="section-label">Part 1 — What Is Recursion?</div>
+
+    <p class="body">Picture a set of <strong>Russian nesting dolls</strong>. You open the big doll and find a smaller doll inside. You open that one and find an even smaller doll. You keep going until you reach the tiniest doll, which doesn't open — it's solid. <strong>Recursion</strong> is exactly this idea in code: a method that calls itself on a smaller piece of the problem, again and again, until it reaches a piece so small there's nothing left to break down.</p>
+
+    <p class="body">In Lesson 5 you saw one method call <em>another</em> method. Recursion is just a method calling <em>itself</em>. Here is the shortest possible example — a countdown:</p>
+    <pre><code class="language-java">public class Main {
+
+    static void countdown(int n) {
+        if (n == 0) {                       // the tiniest doll — stop here
+            System.out.println("Liftoff!");
+            return;
+        }
+        System.out.println(n);
+        countdown(n - 1);                   // call MYSELF with a smaller number
+    }
+
+    public static void main(String[] args) {
+        countdown(3);
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 It's not as strange as it looks</div>
+      <p>When <code>countdown(3)</code> runs <code>countdown(2)</code>, that's just a normal method call — Java doesn't care that the method happens to have the same name. It runs a fresh copy with <code>n</code> set to 2. Each copy has its own <code>n</code>, exactly like the local variables you met in Lesson 5.</p>
+    </div>
+  </div>
+
+  <!-- ── 6.2 THE TWO PARTS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 2 — The Two Essential Parts</div>
+
+    <p class="body">Every correct recursive method has <strong>exactly two parts</strong>. Miss either one and it breaks. Learn these two words and you understand 90% of recursion:</p>
+
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th>Part</th><th>What it is</th><th>In the countdown</th></tr>
+      <tr class="hl"><td>Base case</td><td>The simplest version, where you know the answer immediately and <strong>stop</strong> — no more calls</td><td><code>if (n == 0)</code> → print "Liftoff!" and return</td></tr>
+      <tr><td>Recursive case</td><td>You do a little work, then call the method again on a <strong>smaller</strong> input, moving toward the base case</td><td><code>countdown(n - 1)</code></td></tr>
+    </table>
+
+    <p class="body">The golden rule: <strong>every recursive call must move closer to the base case</strong>. The countdown subtracts 1 each time, so 3 → 2 → 1 → 0, and at 0 it stops. If it ever moved <em>away</em> from the base case, it would never stop.</p>
+
+    <h3 class="topic">Same Shape, Different Job</h3>
+    <p class="body">Here's a method that adds up <code class="il">1 + 2 + 3 + ... + n</code>. Look for the same two parts: a base case that stops, and a recursive case that shrinks the problem.</p>
+    <pre><code class="language-java">public class Main {
+
+    static int sumTo(int n) {
+        if (n == 1) {              // BASE CASE: sum of just 1 is 1
+            return 1;
+        }
+        return n + sumTo(n - 1);   // RECURSIVE CASE: n plus the sum of everything below it
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Sum 1..5 = " + sumTo(5));   // 1+2+3+4+5
+        System.out.println("Sum 1..10 = " + sumTo(10));
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Trust the smaller call</div>
+      <p>The trick to <em>writing</em> recursion: assume <code>sumTo(n - 1)</code> already works and gives the right answer for the smaller problem. Then you only have to figure out how to combine it with <code>n</code>. Here, the sum of 1..n is just <code>n</code> added onto the sum of 1..(n-1). Don't try to trace every call in your head — trust the smaller call to do its job.</p>
+    </div>
+  </div>
+
+  <!-- ── 6.3 TRACED WALKTHROUGH ── -->
+  <div class="content-section">
+    <div class="section-label">Part 3 — A Traced Walkthrough: factorial</div>
+
+    <p class="body">The classic recursion example is <strong>factorial</strong>. The factorial of 4 (written <code class="il">4!</code>) means <code class="il">4 × 3 × 2 × 1 = 24</code>. Notice that <code class="il">4!</code> is just <code class="il">4 × 3!</code> — the problem contains a smaller copy of itself. Perfect for recursion:</p>
+    <pre><code class="language-java">public class Main {
+
+    static int factorial(int n) {
+        if (n == 0) {                  // BASE CASE: 0! is defined as 1
+            return 1;
+        }
+        return n * factorial(n - 1);   // RECURSIVE CASE: n times (n-1)!
+    }
+
+    public static void main(String[] args) {
+        System.out.println("4! = " + factorial(4));
+    }
+}</code></pre>
+
+    <p class="body">Let's trace <code class="il">factorial(4)</code> by hand. Recursion happens in <strong>two phases</strong>. First the calls <em>wind up</em> — each one pauses, waiting on a smaller call — until the base case is hit. Then they <em>unwind</em>, each returning its answer to the one that was waiting:</p>
+
+    <div class="demo-result" style="white-space:pre;overflow-x:auto;margin:14px 0;">WINDING UP (each call waits on a smaller one):
+
+factorial(4) = 4 * factorial(3)   ← paused, needs factorial(3)
+  factorial(3) = 3 * factorial(2)   ← paused, needs factorial(2)
+    factorial(2) = 2 * factorial(1)   ← paused, needs factorial(1)
+      factorial(1) = 1 * factorial(0)   ← paused, needs factorial(0)
+        factorial(0) = 1                  ← BASE CASE! answer is known, stop
+
+UNWINDING (each waiting call now finishes):
+
+      factorial(1) = 1 * 1   = 1
+    factorial(2)   = 2 * 1   = 2
+  factorial(3)     = 3 * 2   = 6
+factorial(4)       = 4 * 6   = 24    ← final answer</div>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ The answer is built on the way back</div>
+      <p>A common surprise: almost no multiplication happens on the way <em>down</em>. The calls just stack up, each one stuck waiting. The real work — the multiplying — happens on the way <em>back up</em>, once the base case finally hands back a concrete number to multiply with. Down to find the base case, back up to build the answer.</p>
+    </div>
+  </div>
+
+  <!-- ── 6.4 THE CALL STACK ── -->
+  <div class="content-section">
+    <div class="section-label">Part 4 — The Call Stack</div>
+
+    <p class="body">How does Java remember all those paused calls? With the <strong>call stack</strong> — think of a <strong>stack of plates</strong>. Every time a method is called, Java puts a new plate on top with that call's own variables. When a method returns, its plate is taken off the top, and Java goes back to the plate underneath — exactly where it left off.</p>
+
+    <p class="body">"Stack" means <strong>last on, first off</strong>, like real plates: the last plate you put down is the first one you pick up. During <code class="il">factorial(4)</code>, the stack grows to five plates tall, then shrinks back down one plate at a time as each call returns:</p>
+
+    <div class="demo-result" style="white-space:pre;overflow-x:auto;margin:14px 0;">Stack at its TALLEST (just as factorial(0) runs):
+
+   ┌─────────────────┐  ← top plate (added last, removed first)
+   │ factorial(0)    │
+   ├─────────────────┤
+   │ factorial(1)    │  waiting for factorial(0)
+   ├─────────────────┤
+   │ factorial(2)    │  waiting for factorial(1)
+   ├─────────────────┤
+   │ factorial(3)    │  waiting for factorial(2)
+   ├─────────────────┤
+   │ factorial(4)    │  waiting for factorial(3)
+   ├─────────────────┤
+   │ main            │  waiting for factorial(4)
+   └─────────────────┘  ← bottom plate (where it all started)</div>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Each plate has its own variables</div>
+      <p>Every plate keeps its own copy of <code>n</code>. The plate for <code>factorial(2)</code> has <code>n = 2</code>; the one for <code>factorial(3)</code> has <code>n = 3</code> — at the very same time. They never get mixed up, which is the whole reason recursion works. This is just local scope (Lesson 5) doing its job, one plate per call.</p>
+    </div>
+
+    <!-- Interactive Demo: Call-Stack Tracer -->
+    <div class="demo-wrap" style="margin-top:24px;">
+      <div class="demo-header">
+        <div class="demo-dot" style="background:#ef4444"></div>
+        <div class="demo-dot" style="background:#f59e0b;margin-left:4px"></div>
+        <div class="demo-dot" style="background:#10b981;margin-left:4px"></div>
+        <span class="label" style="margin-left:8px">Interactive — Call-Stack Tracer</span>
+      </div>
+      <div class="demo-body">
+        <p>Pick a number and watch <code>factorial(n)</code> wind up the stack to the base case, then unwind to build the answer — exactly the two phases from the walkthrough above.</p>
+        <div class="form-row">
+          <label>factorial(</label>
+          <input class="demo-input" id="rec-n" type="number" value="4" min="0" max="8" style="width:70px"/>
+          <label>)</label>
+          <button class="run-btn" onclick="runRecursionDemo()">Trace ▶</button>
+        </div>
+        <div class="demo-result" id="rec-result">Click Trace to watch the calls stack up and unwind...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 6.5 MORE PATTERNS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 5 — More Classic Patterns</div>
+
+    <p class="body">Once you spot the shape — base case + smaller call — you can write all sorts of recursive methods. Here's <strong>power</strong>: raising a number to a whole exponent. Note that <code class="il">base⁰ = 1</code> for any base, which gives us a clean base case.</p>
+    <pre><code class="language-java">public class Main {
+
+    // Computes base raised to the power exp, e.g. power(2, 5) = 32
+    static int power(int base, int exp) {
+        if (exp == 0) {                     // BASE CASE: anything to the 0 is 1
+            return 1;
+        }
+        return base * power(base, exp - 1); // RECURSIVE CASE: one fewer multiply
+    }
+
+    public static void main(String[] args) {
+        System.out.println("2^5 = " + power(2, 5));
+        System.out.println("3^4 = " + power(3, 4));
+        System.out.println("5^0 = " + power(5, 0));
+    }
+}</code></pre>
+
+    <p class="body">Recursion also shines on problems that are naturally "made of themselves." Checking whether a word is a <strong>palindrome</strong> (reads the same forwards and backwards, like "racecar") is one: a word is a palindrome if its first and last letters match <em>and</em> the bit in the middle is also a palindrome.</p>
+    <pre><code class="language-java">public class Main {
+
+    static boolean isPalindrome(String s) {
+        if (s.length() <= 1) {              // BASE CASE: empty or single letter
+            return true;                    // always reads the same both ways
+        }
+        char first = s.charAt(0);
+        char last  = s.charAt(s.length() - 1);
+        if (first != last) {
+            return false;                   // ends don't match — not a palindrome
+        }
+        // chop off both ends, check the smaller middle
+        return isPalindrome(s.substring(1, s.length() - 1));
+    }
+
+    public static void main(String[] args) {
+        System.out.println("racecar -> " + isPalindrome("racecar"));
+        System.out.println("hello   -> " + isPalindrome("hello"));
+        System.out.println("noon    -> " + isPalindrome("noon"));
+    }
+}</code></pre>
+  </div>
+
+  <!-- ── 6.6 FIBONACCI ── -->
+  <div class="content-section">
+    <div class="section-label">Part 6 — Fibonacci: When a Call Splits in Two</div>
+
+    <p class="body">The <strong>Fibonacci sequence</strong> starts 0, 1, 1, 2, 3, 5, 8, 13, ... — each number is the <em>sum of the two before it</em>. Because each answer depends on <strong>two</strong> smaller answers, the recursive case makes <strong>two</strong> calls. This needs <strong>two base cases</strong> too:</p>
+    <pre><code class="language-java">public class Main {
+
+    static int fib(int n) {
+        if (n == 0) return 0;            // BASE CASE 1
+        if (n == 1) return 1;            // BASE CASE 2
+        return fib(n - 1) + fib(n - 2);  // RECURSIVE CASE: two calls, added
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i <= 10; i++) {
+            System.out.print(fib(i) + " ");
+        }
+        System.out.println();
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Beautiful, but secretly slow</div>
+      <p>This <code>fib</code> is lovely to read but does a <em>huge</em> amount of repeated work — <code>fib(5)</code> ends up computing <code>fib(2)</code> three separate times! For small <code>n</code> it's fine, but try <code>fib(45)</code> and you'll wait a long time. It's a perfect reminder that "recursion works" doesn't always mean "recursion is the fast choice."</p>
+    </div>
+  </div>
+
+  <!-- ── 6.7 RECURSION VS LOOPS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 7 — Recursion vs. Loops</div>
+
+    <p class="body">Here's a secret: <strong>anything you can do with recursion, you can also do with a loop</strong>, and vice-versa. They're two ways to repeat work. So which should you reach for? Compare the same countdown both ways:</p>
+
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th>Loop version</th><th>Recursive version</th></tr>
+      <tr>
+        <td><code>for (int i = n; i &gt; 0; i--)</code><br/>&nbsp;&nbsp;<code>print(i);</code></td>
+        <td><code>if (n == 0) return;</code><br/><code>print(n);</code><br/><code>countdown(n - 1);</code></td>
+      </tr>
+    </table>
+
+    <p class="body">For a plain countdown, the <strong>loop is simpler</strong> — fewer moving parts and no stack piling up. Reach for a loop when you're just repeating a fixed number of times or marching through an array.</p>
+
+    <p class="body">Recursion <strong>wins when the problem is naturally nested or branching</strong> — things that contain smaller copies of themselves: exploring folders inside folders, navigating a family tree, or splitting a list in half again and again. For those, a recursive solution is often far shorter and clearer than the loop equivalent.</p>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Rule of thumb</div>
+      <p>Use a <strong>loop</strong> for simple, flat repetition (count, sum an array, repeat N times). Use <strong>recursion</strong> when the problem breaks into smaller versions of the same problem. If you can describe the answer in terms of "the answer to a smaller version," recursion will feel natural.</p>
+    </div>
+  </div>
+
+  <!-- ── 6.8 STACK OVERFLOW ── -->
+  <div class="content-section">
+    <div class="section-label">Part 8 — The #1 Danger: A Missing Base Case</div>
+
+    <p class="body">Recursion has one famous way to go wrong: if the calls <strong>never reach a base case</strong>, the method calls itself forever. New plates pile onto the call stack with nothing ever coming off, until the stack runs out of room and Java crashes with a <code class="il">StackOverflowError</code>. This is the recursive cousin of the infinite loop.</p>
+    <pre><code class="language-java">public class Main {
+
+    // BROKEN: no base case, and n never moves toward one
+    static void forever(int n) {
+        System.out.println(n);
+        forever(n + 1);          // n grows away from any stopping point — never ends!
+    }
+
+    public static void main(String[] args) {
+        forever(1);              // crashes with StackOverflowError
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Two ways to forget to stop</div>
+      <p>Infinite recursion happens if you (1) <strong>forget the base case entirely</strong>, or (2) write a base case but the recursive call moves <em>away</em> from it instead of toward it — like calling <code>forever(n + 1)</code> when the base case is <code>n == 0</code>. Always ask: "Does every call get me closer to stopping?" Go ahead and run the code above to see the crash for yourself — then fix it by adding a base case like <code>if (n &gt; 5) return;</code>.</p>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE ── -->
+  <div class="content-section">
+    <div class="section-label">Exercise — 15 Minutes</div>
+    <div class="exercise-header">
+      <span class="ex-icon">⌨️</span>
+      <span class="ex-label">Coding Challenge</span>
+      <span class="ex-time">⏱ ~15 min</span>
+    </div>
+    <div class="exercise-section">
+
+      <div class="exercise-task">
+        <p><strong>Task 1 — countUp()</strong><br/>
+        Write <code>static void countUp(int n)</code> that prints the numbers from 1 up to <code>n</code> using recursion (not a loop). <code>countUp(5)</code> should print 1, 2, 3, 4, 5 each on its own line. <em>Hint: to print in increasing order, make the recursive call <strong>before</strong> you print.</em></p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h6-1')">Show hint</button>
+      <div class="hint-box" id="h6-1">
+        <p>Base case: <code>if (n == 0) return;</code> (nothing to print). Then recurse first, print second: <code>countUp(n - 1);</code> followed by <code>System.out.println(n);</code>. Because the smaller numbers print on the way back up, they come out in order.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 2 — sumDigits()</strong><br/>
+        Write <code>static int sumDigits(int n)</code> that adds up the digits of a number using recursion. <code>sumDigits(123)</code> → 6 (because 1+2+3), and <code>sumDigits(4050)</code> → 9.</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h6-2')">Show hint</button>
+      <div class="hint-box" id="h6-2">
+        <p>The last digit is <code>n % 10</code>; the rest of the number is <code>n / 10</code> (integer division drops the last digit). Base case: <code>if (n == 0) return 0;</code>. Recursive case: <code>return (n % 10) + sumDigits(n / 10);</code>. Each call peels off one digit.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 3 — Fix the base case</strong><br/>
+        This method is supposed to return <code>n * 2</code> but it crashes with a StackOverflowError. Find the bug and fix it so <code>doubleIt(0)</code> → 0 and <code>doubleIt(4)</code> → 8.</p>
+        <pre><code class="language-java">public class Main {
+
+    static int doubleIt(int n) {
+        // BUG: this base case is never reached. Fix it!
+        if (n == 100) {
+            return 0;
+        }
+        return 2 + doubleIt(n - 1);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(doubleIt(4));
+    }
+}</code></pre>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h6-3')">Show hint</button>
+      <div class="hint-box" id="h6-3">
+        <p>The recursive call subtracts 1 (<code>n - 1</code>), so <code>n</code> is always shrinking — it heads toward 0, never toward 100, so the base case never fires. Change the base case to <code>if (n == 0) return 0;</code>. Now <code>doubleIt(4)</code> adds 2 four times → 8.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div class="content-section quiz-section">
+    <div class="section-label">Quick Check — 6 Questions</div>
+    <div class="q-list">
+
+      <div class="q-item">
+        <h4>1. What is a <strong>recursive</strong> method?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">A method with more than one parameter</button>
+          <button class="q-opt" onclick="qa(this,true)">A method that calls itself</button>
+          <button class="q-opt" onclick="qa(this,false)">A method that returns <code>void</code></button>
+          <button class="q-opt" onclick="qa(this,false)">A method that runs inside a loop</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>2. What is the job of the <strong>base case</strong>?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">To make the first call to the method</button>
+          <button class="q-opt" onclick="qa(this,true)">To give the answer for the simplest input and stop the recursion</button>
+          <button class="q-opt" onclick="qa(this,false)">To make the input bigger each time</button>
+          <button class="q-opt" onclick="qa(this,false)">To print the final result</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>3. What happens if a recursive method has <strong>no reachable base case</strong>?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">It returns 0</button>
+          <button class="q-opt" onclick="qa(this,false)">Java skips the method</button>
+          <button class="q-opt" onclick="qa(this,true)">It calls itself forever and crashes with a StackOverflowError</button>
+          <button class="q-opt" onclick="qa(this,false)">It runs exactly once</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>4. Given <code class="il">factorial</code> from Part 3, what does <code class="il">factorial(3)</code> return?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>3</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>6</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>9</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>27</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>5. The data structure that keeps track of all the paused recursive calls is the…</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">array</button>
+          <button class="q-opt" onclick="qa(this,true)">call stack</button>
+          <button class="q-opt" onclick="qa(this,false)">loop counter</button>
+          <button class="q-opt" onclick="qa(this,false)">return type</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>6. Which problem is the <strong>best fit</strong> for recursion over a simple loop?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">Printing "Hello" exactly 10 times</button>
+          <button class="q-opt" onclick="qa(this,false)">Adding up every number in an array</button>
+          <button class="q-opt" onclick="qa(this,true)">Exploring folders that contain other folders inside them</button>
+          <button class="q-opt" onclick="qa(this,false)">Counting from 1 to 100</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /lesson-content -->

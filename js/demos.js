@@ -180,6 +180,53 @@ function runMethodDemo() {
     `int answer = ${name}(${a}, ${b});   // answer is now ${result}`;
 }
 
+// ─── LESSON 6 DEMO: CALL-STACK TRACER ───
+// Visualises factorial(n) as a stack of plates: first the calls WIND UP
+// (each pushed onto the stack, paused, waiting on a smaller call) until the
+// base case is hit, then they UNWIND (each returns, building the answer).
+function runRecursionDemo() {
+  const n  = parseInt(document.getElementById('rec-n').value, 10);
+  const el = document.getElementById('rec-result');
+
+  if (isNaN(n) || n < 0) {
+    el.textContent = '⚠ Enter a whole number that is 0 or more.';
+    return;
+  }
+  if (n > 8) {
+    el.textContent = '⚠ Keep it to 8 or less so the stack stays easy to read (8! is already 40320).';
+    return;
+  }
+
+  const lines = [];
+
+  // Phase 1: winding up — push each call until we reach the base case.
+  lines.push('WINDING UP — each call is pushed and waits:');
+  lines.push('');
+  for (let k = n; k >= 1; k--) {
+    const indent = '  '.repeat(n - k);
+    lines.push(`${indent}factorial(${k}) = ${k} * factorial(${k - 1})   ⏸ waiting`);
+  }
+  const baseIndent = '  '.repeat(n);
+  lines.push(`${baseIndent}factorial(0) = 1   ✓ BASE CASE — stop here`);
+
+  // Phase 2: unwinding — each waiting call now multiplies and returns.
+  lines.push('');
+  lines.push('UNWINDING — each call finishes and returns:');
+  lines.push('');
+  let result = 1;            // factorial(0)
+  for (let k = 1; k <= n; k++) {
+    const prev = result;     // factorial(k-1)
+    result = k * prev;
+    const indent = '  '.repeat(n - k);
+    lines.push(`${indent}factorial(${k}) = ${k} * ${prev} = ${result}`);
+  }
+
+  lines.push('');
+  lines.push(`Answer: factorial(${n}) = ${result}`);
+
+  el.textContent = lines.join('\n');
+}
+
 // ─── DEMO 1: TYPE CASTING EXPLORER ───
 function runCast() {
   const v = parseFloat(document.getElementById('cast-val').value);
