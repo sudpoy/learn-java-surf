@@ -296,6 +296,43 @@ function runPolyDemo() {
       : '// No override here, so the base Animal version runs.');
 }
 
+// ─── LESSON 9 DEMO: STRING INSPECTOR ───
+// Shows length, the index/char layout, and what several common String methods
+// return for whatever text the user types — mirroring the Java String API.
+function runStringDemo() {
+  const s  = document.getElementById('str-input').value;
+  const el = document.getElementById('str-result');
+
+  if (s.length === 0) { el.textContent = '⚠ Type some text first.'; return; }
+  if (s.length > 24) { el.textContent = '⚠ Keep it to 24 characters or fewer so the index map stays readable.'; return; }
+
+  const chars = s.split('');
+  const width = Math.max(...chars.map((_, i) => String(i).length), 1);
+  const pad = x => String(x).padStart(width);
+  const idxRow = 'Index:  ' + chars.map((_, i) => pad(i)).join(' ');
+  const chRow  = 'Char:   ' + chars.map(c => pad(c === ' ' ? '_' : c)).join(' ');
+
+  // Java-style method results.
+  const upper = s.toUpperCase();
+  const lower = s.toLowerCase();
+  const firstL = s.charAt(0);
+  const lastL = s.charAt(s.length - 1);
+  const idxOfL = s.indexOf('l');
+  const sub = s.length >= 4 ? s.substring(1, 4) : s.substring(1);
+  const subCall = s.length >= 4 ? 'substring(1, 4)' : 'substring(1)';
+
+  el.textContent =
+    'String s = "' + s + '";\n\n' +
+    idxRow + '\n' + chRow + '\n  (spaces shown as _)\n\n' +
+    's.length()        -> ' + s.length + '\n' +
+    "s.charAt(0)       -> '" + firstL + "'\n" +
+    "s.charAt(" + (s.length - 1) + ")    -> '" + lastL + "'   (last char)\n" +
+    's.toUpperCase()   -> "' + upper + '"\n' +
+    's.toLowerCase()   -> "' + lower + '"\n' +
+    's.indexOf("l")    -> ' + idxOfL + (idxOfL === -1 ? '   (not found)' : '') + '\n' +
+    's.' + subCall + ' -> "' + sub + '"';
+}
+
 // ─── DEMO 1: TYPE CASTING EXPLORER ───
 function runCast() {
   const v = parseFloat(document.getElementById('cast-val').value);

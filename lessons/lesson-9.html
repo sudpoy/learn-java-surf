@@ -1,15 +1,381 @@
 <div class="lesson-header">
   <div class="lesson-badge"><span class="dot" style="background:#14b8a6"></span>Week 9 of 10</div>
-  <h2>Strings &amp; StringBuilder</h2>
-  <p class="desc">String immutability, the full String API, StringBuilder, and type parsing.</p>
+  <h2>Strings</h2>
+  <p class="desc">Text is everywhere — names, messages, passwords, search boxes. In Java, a piece of text is a <strong>String</strong>, and it comes loaded with handy tools for measuring, searching, slicing, and transforming it. You'll also meet one of the most famous beginner traps in all of Java: comparing strings the wrong way.</p>
   <div class="lesson-stats">
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Lecture: <strong>~40 min</strong></span></div>
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Exercise: <strong>~15 min</strong></span></div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Lecture: <strong>~40 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span>Exercise: <strong>~15 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Topics: <strong>length · charAt · substring · indexOf · equals · split · immutability</strong></span>
+    </div>
   </div>
 </div>
-<div class="coming-soon">
-  <div class="cs-num">09</div>
-  <h3>Coming Soon</h3>
-  <p>String immutability, the full String API, StringBuilder, and type parsing.</p>
-  <div class="cs-topics"><span class="cs-topic">String methods</span><span class="cs-topic">Immutability</span><span class="cs-topic">StringBuilder</span><span class="cs-topic">parseInt</span><span class="cs-topic">equals()</span></div>
-</div>
+
+<div class="lesson-content">
+
+  <!-- ── 9.1 WHAT IS A STRING ── -->
+  <div class="content-section">
+    <div class="section-label">Part 1 — What a String Is</div>
+
+    <p class="body">A <strong>String</strong> is a <em>sequence of characters</em> — letters, digits, spaces, punctuation — in order, like beads on a string. The word <code class="il">"Hello"</code> is five characters in a row: H, e, l, l, o. You write a String literal inside <strong>double quotes</strong>.</p>
+
+    <p class="body">Here's something important: a String is an <strong>object</strong> (remember Lesson 7?), not a simple type like <code class="il">int</code>. That's why <code class="il">String</code> is capitalized, and why it comes with <em>methods</em> you call with a dot — like <code class="il">.length()</code>. You can create one the easy way (just quotes) and immediately start using its tools:</p>
+    <pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        String greeting = "Hello";
+        String name = "Mia";
+
+        System.out.println(greeting);
+        System.out.println("That word has " + greeting.length() + " characters.");
+        System.out.println("Name length: " + name.length());
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 length() has parentheses</div>
+      <p>Watch the difference from arrays! An array used <code>arr.length</code> (no parentheses — it's a field). A String uses <code>greeting.length()</code> <em>with</em> parentheses, because it's a <strong>method call</strong>. Easy to mix up — Java will remind you if you forget.</p>
+    </div>
+  </div>
+
+  <!-- ── 9.2 CHARAT & INDEXING ── -->
+  <div class="content-section">
+    <div class="section-label">Part 2 — Characters &amp; Indexing</div>
+
+    <p class="body">Just like arrays, the characters in a String have <strong>index numbers starting at 0</strong>. The first character is at index 0, the second at index 1, and so on. Use <code class="il">charAt(i)</code> to grab the character at a position. For <code class="il">"Hello"</code>:</p>
+
+    <div class="demo-result" style="white-space:pre;overflow-x:auto;margin:14px 0;">String:  "Hello"
+
+Index:    0   1   2   3   4
+Char:     H   e   l   l   o
+
+"Hello".charAt(0)  ->  'H'
+"Hello".charAt(4)  ->  'o'
+"Hello".length()   ->   5    (so the last index is length - 1 = 4)</div>
+
+    <pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        String word = "Hello";
+
+        System.out.println("First char: " + word.charAt(0));
+        System.out.println("Third char: " + word.charAt(2));
+
+        int last = word.length() - 1;
+        System.out.println("Last char:  " + word.charAt(last));
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Off the end = crash</div>
+      <p>Valid indexes go from 0 to <code>length() - 1</code>. Asking for <code>"Hello".charAt(5)</code> reaches past the end and throws a <code>StringIndexOutOfBoundsException</code> — the String cousin of the array out-of-bounds error from Lesson 4. The last <em>real</em> character is always at <code>length() - 1</code>.</p>
+    </div>
+  </div>
+
+  <!-- ── 9.3 COMMON METHODS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 3 — The Everyday String Toolbox</div>
+
+    <p class="body">Strings come with dozens of built-in methods. Here are the ones you'll reach for constantly. Each one <em>answers a question</em> or <em>hands back a new string</em>:</p>
+
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th>Method</th><th>What it does</th><th>Example on <code>"Hello"</code></th></tr>
+      <tr><td><code>toUpperCase()</code></td><td>All capitals</td><td><code>"HELLO"</code></td></tr>
+      <tr class="hl"><td><code>toLowerCase()</code></td><td>All lowercase</td><td><code>"hello"</code></td></tr>
+      <tr><td><code>indexOf("l")</code></td><td>First position of text (or -1)</td><td><code>2</code></td></tr>
+      <tr class="hl"><td><code>contains("ell")</code></td><td>Is the text inside? (true/false)</td><td><code>true</code></td></tr>
+      <tr><td><code>substring(1, 4)</code></td><td>Slice from index 1 up to (not incl.) 4</td><td><code>"ell"</code></td></tr>
+      <tr class="hl"><td><code>replace("l", "L")</code></td><td>Swap every match</td><td><code>"HeLLo"</code></td></tr>
+    </table>
+
+    <pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        String s = "Hello";
+
+        System.out.println(s.toUpperCase());     // HELLO
+        System.out.println(s.toLowerCase());     // hello
+        System.out.println(s.indexOf("l"));      // 2  (first 'l')
+        System.out.println(s.contains("ell"));   // true
+        System.out.println(s.substring(1, 4));   // ell
+        System.out.println(s.replace("l", "L")); // HeLLo
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 substring(start, end) stops just before end</div>
+      <p><code>substring(1, 4)</code> gives you indexes 1, 2, and 3 — but <strong>not</strong> 4. The end number is "up to, but not including," exactly like the loop bounds you used with arrays. So the length of the slice is simply <code>end - start</code> (here, 4 - 1 = 3 characters).</p>
+    </div>
+
+    <h3 class="topic">trim() and split()</h3>
+    <p class="body">Two more workhorses: <code class="il">trim()</code> removes blank space from the start and end (great for cleaning up typed input), and <code class="il">split()</code> breaks a String into an <em>array</em> of pieces wherever it finds a separator:</p>
+    <pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        String messy = "   hi there   ";
+        System.out.println("[" + messy.trim() + "]");   // [hi there]
+
+        String csv = "apple,banana,cherry";
+        String[] fruits = csv.split(",");               // break on each comma
+        System.out.println("Pieces: " + fruits.length);
+        for (String f : fruits) {
+            System.out.println(" - " + f);
+        }
+    }
+}</code></pre>
+  </div>
+
+  <!-- ── 9.4 CONCATENATION ── -->
+  <div class="content-section">
+    <div class="section-label">Part 4 — Joining Strings (Concatenation)</div>
+
+    <p class="body">Gluing strings together is called <strong>concatenation</strong>. You've already been doing it with the <code class="il">+</code> operator. There's also a method, <code class="il">.concat()</code>, but <code class="il">+</code> is what almost everyone uses because it's shorter and can join strings with numbers too:</p>
+    <pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        String first = "Ada";
+        String last = "Lovelace";
+
+        String full = first + " " + last;        // the + way (most common)
+        System.out.println(full);
+
+        String full2 = first.concat(" ").concat(last);   // the .concat() way
+        System.out.println(full2);
+
+        int age = 12;
+        System.out.println(first + " is " + age + " years old.");  // + mixes in numbers
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Numbers and + can surprise you</div>
+      <p>When <code>+</code> sees a String, it switches to "join text" mode. So <code>"Score: " + 3 + 4</code> gives <code>"Score: 34"</code> (it glues "3" then "4"), <em>not</em> <code>"Score: 7"</code>! If you want the math first, wrap it in parentheses: <code>"Score: " + (3 + 4)</code> gives <code>"Score: 7"</code>.</p>
+    </div>
+  </div>
+
+  <!-- ── 9.5 EQUALS TRAP ── -->
+  <div class="content-section">
+    <div class="section-label">Part 5 — Comparing Strings: the #1 Beginner Trap</div>
+
+    <p class="body">This is the most important section in the lesson. To check if two strings have the <strong>same text</strong>, you must use <code class="il">.equals()</code> — <strong>never</strong> <code class="il">==</code>. Here's why: <code class="il">==</code> asks "are these the exact same object in memory?", while <code class="il">.equals()</code> asks "do these contain the same characters?" For text, you almost always mean the second one.</p>
+    <pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        String a = "hello";
+        String b = "hel" + someText();   // built at runtime -> a different object
+
+        System.out.println("a == b is:        " + (a == b));        // false (!)
+        System.out.println("a.equals(b) is:   " + a.equals(b));     // true  (correct)
+    }
+
+    static String someText() {
+        return "lo";
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Burn this into your memory</div>
+      <p>Use <code>.equals()</code> to compare String <em>content</em>. <code>==</code> on strings compares <em>identity</em> (same object?), and it sometimes <em>looks</em> like it works — then mysteriously fails when the strings are built in different ways, like above. This bug has tripped up basically every Java beginner ever. Text comparison = <code>.equals()</code>. Always.</p>
+    </div>
+
+    <h3 class="topic">equalsIgnoreCase() for "close enough"</h3>
+    <p class="body">Often you don't care about capitalization — "YES", "yes", and "Yes" should all count as a yes. <code class="il">equalsIgnoreCase()</code> compares the text while ignoring upper/lower case:</p>
+    <pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        String answer = "YES";
+
+        System.out.println(answer.equals("yes"));            // false (case differs)
+        System.out.println(answer.equalsIgnoreCase("yes"));  // true  (ignores case)
+
+        if (answer.equalsIgnoreCase("yes")) {
+            System.out.println("Great, let's go!");
+        }
+    }
+}</code></pre>
+  </div>
+
+  <!-- ── 9.6 IMMUTABILITY ── -->
+  <div class="content-section">
+    <div class="section-label">Part 6 — Strings Are Immutable</div>
+
+    <p class="body">Here's a surprising fact: once a String is created, it can <strong>never be changed</strong>. This is called being <strong>immutable</strong> ("un-changeable"). Methods like <code class="il">toUpperCase()</code> don't edit the original — they <em>build and return a brand-new String</em> and leave the old one exactly as it was.</p>
+    <pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        String s = "hello";
+
+        s.toUpperCase();                  // makes "HELLO"... but we ignore it!
+        System.out.println(s);            // still "hello" — unchanged
+
+        s = s.toUpperCase();              // to keep it, save it back
+        System.out.println(s);            // now "HELLO"
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 The fix: catch the new string</div>
+      <p>Because a String can't change itself, calling <code>s.toUpperCase()</code> alone is pointless — the result floats away. You have to <strong>assign it back</strong>: <code>s = s.toUpperCase();</code>. Think of it like math: <code>x + 1</code> doesn't change <code>x</code> unless you write <code>x = x + 1</code>. Same idea.</p>
+    </div>
+  </div>
+
+  <!-- ── 9.7 LOOPING OVER CHARS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 7 — Looping Over the Characters</div>
+
+    <p class="body">Combine <code class="il">length()</code> and <code class="il">charAt()</code> with a loop (Lesson 3) and you can walk through a String one character at a time — counting things, searching, transforming. Here we count how many times the letter <code class="il">'l'</code> appears:</p>
+    <pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        String word = "yellow umbrella";
+        int count = 0;
+
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            if (c == 'l') {
+                count++;
+            }
+        }
+
+        System.out.println("'l' appears " + count + " times.");
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 char uses single quotes</div>
+      <p>One character on its own is a <code>char</code>, written with <strong>single</strong> quotes: <code>'l'</code>. A String — even a one-letter one — uses <strong>double</strong> quotes: <code>"l"</code>. Since <code>char</code> is a simple type (not an object), comparing two chars with <code>==</code> is perfectly fine — the <code>.equals()</code> rule is only for <em>String</em> objects.</p>
+    </div>
+
+    <!-- Interactive Demo: String Inspector -->
+    <div class="demo-wrap" style="margin-top:24px;">
+      <div class="demo-header">
+        <div class="demo-dot" style="background:#14b8a6"></div>
+        <div class="demo-dot" style="background:#f59e0b;margin-left:4px"></div>
+        <div class="demo-dot" style="background:#10b981;margin-left:4px"></div>
+        <span class="label" style="margin-left:8px">Interactive — String Inspector</span>
+      </div>
+      <div class="demo-body">
+        <p>Type any text and see its length, the index/character layout, and what several common String methods return.</p>
+        <div class="form-row">
+          <label>String s =</label>
+          <input class="demo-input" id="str-input" type="text" value="Hello" style="width:200px"/>
+          <button class="run-btn" onclick="runStringDemo()">Inspect ▶</button>
+        </div>
+        <div class="demo-result" id="str-result">Type some text and click Inspect...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE ── -->
+  <div class="content-section">
+    <div class="section-label">Exercise — 15 Minutes</div>
+    <div class="exercise-header">
+      <span class="ex-icon">⌨️</span>
+      <span class="ex-label">Coding Challenge</span>
+      <span class="ex-time">⏱ ~15 min</span>
+    </div>
+    <div class="exercise-section">
+
+      <div class="exercise-task">
+        <p><strong>Task 1 — Initials</strong><br/>
+        Given <code>String first = "Ada";</code> and <code>String last = "Lovelace";</code>, print the person's initials with dots, like <code>A.L.</code> — using <code>charAt(0)</code> on each name.</p>
+        <p style="font-size:.82rem;color:#6b7280;margin-top:6px;"><em>Hint: <code>charAt(0)</code> gives a <code>char</code>; you can join chars and strings with <code>+</code>.</em></p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h9-1')">Show hint</button>
+      <div class="hint-box" id="h9-1">
+        <p>Build the result with concatenation: <code>String initials = first.charAt(0) + "." + last.charAt(0) + ".";</code> then <code>System.out.println(initials);</code>. The <code>+</code> turns each char into text as it joins.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 2 — Password check (use equals!)</strong><br/>
+        Set <code>String entered = "Swordfish";</code> and <code>String correct = "swordfish";</code>. Use <code>equalsIgnoreCase()</code> to check if they match, and print <code>"Access granted"</code> or <code>"Denied"</code>. Then try it with plain <code>equals()</code> and notice the difference.</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h9-2')">Show hint</button>
+      <div class="hint-box" id="h9-2">
+        <p><code>if (entered.equalsIgnoreCase(correct)) { System.out.println("Access granted"); } else { System.out.println("Denied"); }</code>. With <code>equalsIgnoreCase</code> the capital S doesn't matter, so it's granted. With <code>equals</code> it would be denied — never use <code>==</code> here!</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 3 — Count the vowels</strong><br/>
+        Loop over <code>String text = "programming";</code> and count how many vowels (a, e, i, o, u) it contains, then print the total. (For "programming" the answer is 3.)</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h9-3')">Show hint</button>
+      <div class="hint-box" id="h9-3">
+        <p>Loop with <code>for (int i = 0; i &lt; text.length(); i++)</code>, grab <code>char c = text.charAt(i);</code>, and test it: <code>if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') count++;</code>. Print <code>count</code> after the loop.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div class="content-section quiz-section">
+    <div class="section-label">Quick Check — 6 Questions</div>
+    <div class="q-list">
+
+      <div class="q-item">
+        <h4>1. What is the index of the <strong>first</strong> character in a String?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,true)"><code>0</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>1</code></button>
+          <button class="q-opt" onclick="qa(this,false)">It depends on the length</button>
+          <button class="q-opt" onclick="qa(this,false)"><code>-1</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>2. How do you correctly check whether two strings have the <strong>same text</strong>?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>a == b</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>a.equals(b)</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>a = b</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>a.same(b)</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>3. What does <code class="il">"Hello".substring(1, 4)</code> return?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>"Hell"</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>"ell"</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>"ello"</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>"llo"</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>4. After <code class="il">String s = "hi"; s.toUpperCase();</code> (with no assignment), what is <code class="il">s</code>?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,true)">Still <code>"hi"</code> — strings are immutable</button>
+          <button class="q-opt" onclick="qa(this,false)"><code>"HI"</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>null</code></button>
+          <button class="q-opt" onclick="qa(this,false)">It causes an error</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>5. What does <code class="il">"a,b,c".split(",")</code> give you?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">One String <code>"abc"</code></button>
+          <button class="q-opt" onclick="qa(this,true)">An array of 3 strings: <code>"a"</code>, <code>"b"</code>, <code>"c"</code></button>
+          <button class="q-opt" onclick="qa(this,false)">The number 3</button>
+          <button class="q-opt" onclick="qa(this,false)">An error — you can't split text</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>6. What is <code class="il">"Score: " + 3 + 4</code>?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>"Score: 7"</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>"Score: 34"</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>"Score: " + 7</code></button>
+          <button class="q-opt" onclick="qa(this,false)">An error — can't add numbers to text</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /lesson-content -->
