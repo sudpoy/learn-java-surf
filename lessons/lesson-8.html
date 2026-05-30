@@ -1,15 +1,412 @@
 <div class="lesson-header">
   <div class="lesson-badge"><span class="dot" style="background:#f97316"></span>Week 8 of 10</div>
-  <h2>Encapsulation &amp; Inheritance</h2>
-  <p class="desc">Access modifiers, getters/setters, extends, super(), method overriding, and polymorphism.</p>
+  <h2>Inheritance</h2>
+  <p class="desc">You just learned to build classes. But what if two classes are almost the same? A Dog and a Cat are both Animals — they share a lot. <strong>Inheritance</strong> lets one class build on another, getting all its fields and methods for free, then adding or changing just the bits that are different. It's how Java avoids copy-paste and models real "is-a" relationships.</p>
   <div class="lesson-stats">
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Lecture: <strong>~40 min</strong></span></div>
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Exercise: <strong>~15 min</strong></span></div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Lecture: <strong>~40 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span>Exercise: <strong>~15 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Topics: <strong>extends · superclass · subclass · super() · @Override · polymorphism · Object</strong></span>
+    </div>
   </div>
 </div>
-<div class="coming-soon">
-  <div class="cs-num">08</div>
-  <h3>Coming Soon</h3>
-  <p>Access modifiers, getters/setters, extends, super(), method overriding, and polymorphism.</p>
-  <div class="cs-topics"><span class="cs-topic">private / public</span><span class="cs-topic">Getters / Setters</span><span class="cs-topic">extends</span><span class="cs-topic">@Override</span><span class="cs-topic">Polymorphism</span></div>
-</div>
+
+<div class="lesson-content">
+
+  <!-- ── 8.1 WHAT IS INHERITANCE ── -->
+  <div class="content-section">
+    <div class="section-label">Part 1 — What Inheritance Is &amp; Why It Helps</div>
+
+    <p class="body">Think about how traits pass down in a family. You might inherit your grandmother's eye color and your dad's laugh — you get those "for free," and then you add things that are uniquely <em>you</em>. Classes can work the same way. A general class holds what everything shares, and a more specific class <strong>inherits</strong> all of it, then adds its own twist.</p>
+
+    <p class="body">The test for whether inheritance fits is the <strong>"is-a" relationship</strong>: a Dog <em>is an</em> Animal, a Car <em>is a</em> Vehicle. When that sentence sounds true, inheritance is usually a good fit. The big win is <strong>reuse</strong> — write the shared code once in the general class, and every specific class gets it automatically. No copy-paste.</p>
+
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th>Term</th><th>Means</th><th>In our example</th></tr>
+      <tr class="hl"><td>Superclass (parent)</td><td>The general class others build on</td><td><code>Animal</code></td></tr>
+      <tr><td>Subclass (child)</td><td>The specific class that inherits</td><td><code>Dog</code>, <code>Cat</code></td></tr>
+      <tr class="hl"><td><code>extends</code></td><td>The keyword that links child to parent</td><td><code>class Dog extends Animal</code></td></tr>
+    </table>
+  </div>
+
+  <!-- ── 8.2 EXTENDS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 2 — extends: Inheriting Fields &amp; Methods</div>
+
+    <p class="body">The keyword <code class="il">extends</code> makes one class a child of another. The child automatically gets all the parent's fields and methods — without writing them again. Here <code class="il">Dog</code> extends <code class="il">Animal</code>, so even though <code class="il">Dog</code> looks almost empty, it already <em>has</em> a <code class="il">name</code> and can <code class="il">eat()</code>:</p>
+    <pre><code class="language-java">class Animal {
+    String name;
+
+    void eat() {
+        System.out.println(name + " is eating.");
+    }
+}
+
+class Dog extends Animal {        // Dog IS-A Animal
+    // no fields or methods written here yet...
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog d = new Dog();
+        d.name = "Rex";           // 'name' was inherited from Animal
+        d.eat();                  // 'eat()' was inherited from Animal
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 The child gets it all for free</div>
+      <p><code>Dog</code> never declares <code>name</code> or <code>eat()</code>, yet both work — because it <code>extends Animal</code>. That's the whole point: shared things live in the parent, and every child inherits them. Write once, reuse everywhere.</p>
+    </div>
+  </div>
+
+  <!-- ── 8.3 ADDING TO A SUBCLASS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 3 — Adding New Things in the Subclass</div>
+
+    <p class="body">A subclass isn't limited to what it inherits — it can <strong>add its own</strong> fields and methods on top. The result is "everything the parent has, <em>plus</em> the child's extras." Our <code class="il">Dog</code> keeps the inherited <code class="il">name</code> and <code class="il">eat()</code>, and adds a <code class="il">bark()</code> that only dogs have:</p>
+    <pre><code class="language-java">class Animal {
+    String name;
+
+    void eat() {
+        System.out.println(name + " is eating.");
+    }
+}
+
+class Dog extends Animal {
+    void bark() {                      // brand-new, only on Dog
+        System.out.println(name + " says: Woof!");   // can still use inherited 'name'
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog d = new Dog();
+        d.name = "Rex";
+        d.eat();      // inherited from Animal
+        d.bark();     // added by Dog
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ It only goes one way</div>
+      <p>The child can use everything from the parent, but <strong>not the reverse</strong>. An <code>Animal</code> variable doesn't have <code>bark()</code> — only <code>Dog</code> added that. Inheritance flows <em>downward</em>: children get the parent's stuff, parents don't get the children's.</p>
+    </div>
+  </div>
+
+  <!-- ── 8.4 SUPER ── -->
+  <div class="content-section">
+    <div class="section-label">Part 4 — super(): Building on the Parent's Constructor</div>
+
+    <p class="body">When a parent has a constructor that sets up its fields, the child should reuse it instead of repeating the work. <code class="il">super(...)</code> calls the <strong>parent's constructor</strong>, and it must be the <em>first line</em> of the child's constructor. Here <code class="il">Animal</code> sets up <code class="il">name</code>; <code class="il">Dog</code> calls <code class="il">super(name)</code> to handle that, then sets up its own <code class="il">breed</code>:</p>
+    <pre><code class="language-java">class Animal {
+    String name;
+
+    Animal(String name) {
+        this.name = name;
+    }
+}
+
+class Dog extends Animal {
+    String breed;
+
+    Dog(String name, String breed) {
+        super(name);          // let Animal set up 'name' first
+        this.breed = breed;   // then set up Dog's own field
+    }
+
+    void describe() {
+        System.out.println(name + " is a " + breed + ".");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog d = new Dog("Rex", "Labrador");
+        d.describe();
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 super = "the parent part of me"</div>
+      <p>Just like <code>this</code> means "this object," <code>super</code> means "the parent's version." <code>super(name)</code> runs <code>Animal</code>'s constructor; later you'll also see <code>super.someMethod()</code> to call the parent's version of a method. It lets the child build <em>on top of</em> the parent rather than redoing its work.</p>
+    </div>
+  </div>
+
+  <!-- ── 8.5 OVERRIDING ── -->
+  <div class="content-section">
+    <div class="section-label">Part 5 — Overriding: Changing an Inherited Method</div>
+
+    <p class="body">Sometimes the child needs a method to behave <em>differently</em> than the parent's version. <strong>Overriding</strong> means the child re-writes an inherited method, keeping the same name and parameters but giving it a new body. We mark it with <code class="il">@Override</code> so Java (and other readers) know it's intentional. A generic <code class="il">Animal</code> makes a generic sound; a <code class="il">Cat</code> overrides it:</p>
+    <pre><code class="language-java">class Animal {
+    String name;
+
+    Animal(String name) { this.name = name; }
+
+    void makeSound() {
+        System.out.println(name + " makes a sound.");
+    }
+}
+
+class Cat extends Animal {
+    Cat(String name) { super(name); }
+
+    @Override
+    void makeSound() {                                 // same name, NEW behavior
+        System.out.println(name + " says: Meow!");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal generic = new Animal("Thing");
+        Cat felix = new Cat("Felix");
+        generic.makeSound();    // Animal's version
+        felix.makeSound();      // Cat's overriding version
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Overriding vs. overloading — don't mix them up</div>
+      <p><strong>Overriding</strong> (this section): a <em>child</em> replaces a parent's method using the <em>same</em> name and parameters. <strong>Overloading</strong> (Lesson 5): <em>same class</em>, same name but <em>different</em> parameters. Override = same signature, different class. Overload = same name, different signature. The <code>@Override</code> tag only applies to overriding.</p>
+    </div>
+
+    <h3 class="topic">Reusing the Parent's Version with super.method()</h3>
+    <p class="body">An override can still call the original parent version using <code class="il">super.method()</code> — handy when you want to <em>add</em> to the parent's behavior instead of fully replacing it:</p>
+    <pre><code class="language-java">class Animal {
+    void greet() {
+        System.out.println("I am an animal.");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    void greet() {
+        super.greet();                       // do the parent's part first
+        System.out.println("...and I am a dog!");   // then add my own
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        new Dog().greet();
+    }
+}</code></pre>
+  </div>
+
+  <!-- ── 8.6 POLYMORPHISM ── -->
+  <div class="content-section">
+    <div class="section-label">Part 6 — A Gentle Intro to Polymorphism</div>
+
+    <p class="body">Here's the magic that overriding unlocks. Because a Dog <em>is an</em> Animal, an <code class="il">Animal</code> variable is allowed to hold a <code class="il">Dog</code> object. And when you call an overridden method, Java picks the version based on the <strong>real object</strong>, not the variable's type. This is <strong>polymorphism</strong> — "many forms": one <code class="il">Animal</code> variable, different behavior depending on what it actually holds.</p>
+    <pre><code class="language-java">class Animal {
+    String name;
+    Animal(String name) { this.name = name; }
+    void makeSound() { System.out.println(name + " makes a sound."); }
+}
+
+class Dog extends Animal {
+    Dog(String name) { super(name); }
+    @Override void makeSound() { System.out.println(name + " says: Woof!"); }
+}
+
+class Cat extends Animal {
+    Cat(String name) { super(name); }
+    @Override void makeSound() { System.out.println(name + " says: Meow!"); }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // An array of Animal can hold Dogs AND Cats
+        Animal[] zoo = { new Dog("Rex"), new Cat("Felix"), new Animal("Blob") };
+
+        for (Animal a : zoo) {
+            a.makeSound();    // each picks ITS OWN overridden version
+        }
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Why this is powerful</div>
+      <p>The loop doesn't care whether each item is a Dog, a Cat, or a plain Animal — it just calls <code>makeSound()</code> and the <em>right</em> version runs automatically. You could add a <code>Cow</code> class tomorrow and the loop would handle it with zero changes. That's how big programs stay flexible: write code against the general type, let each object behave as itself.</p>
+    </div>
+
+    <!-- Interactive Demo: Polymorphism Explorer -->
+    <div class="demo-wrap" style="margin-top:24px;">
+      <div class="demo-header">
+        <div class="demo-dot" style="background:#f97316"></div>
+        <div class="demo-dot" style="background:#f59e0b;margin-left:4px"></div>
+        <div class="demo-dot" style="background:#10b981;margin-left:4px"></div>
+        <span class="label" style="margin-left:8px">Interactive — Polymorphism Explorer</span>
+      </div>
+      <div class="demo-body">
+        <p>Store a child object in an <code>Animal</code> variable, then call <code>makeSound()</code>. See the "is-a" check and which overridden version Java runs based on the <em>real</em> object.</p>
+        <div class="form-row">
+          <label>Animal a = new</label>
+          <select class="demo-select" id="poly-type">
+            <option value="Dog">Dog</option>
+            <option value="Cat">Cat</option>
+            <option value="Cow">Cow</option>
+            <option value="Animal">Animal</option>
+          </select>
+          <label>("</label>
+          <input class="demo-input" id="poly-name" type="text" value="Rex" style="width:90px"/>
+          <label>");</label>
+          <button class="run-btn" onclick="runPolyDemo()">a.makeSound() ▶</button>
+        </div>
+        <div class="demo-result" id="poly-result">Pick a type and click to see which version runs...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 8.7 OBJECT ── -->
+  <div class="content-section">
+    <div class="section-label">Part 7 — Everything Extends Object</div>
+
+    <p class="body">Here's a secret about Java: <strong>every class secretly extends a built-in class called <code class="il">Object</code></strong>, even when you don't write <code class="il">extends</code> anything. That's why every object already has a few methods — like <code class="il">toString()</code>, which turns an object into text. By default it prints something ugly, but you can <em>override</em> it (just like Part 5!) to make your object describe itself nicely:</p>
+    <pre><code class="language-java">class Dog {
+    String name;
+    int age;
+    Dog(String name, int age) { this.name = name; this.age = age; }
+
+    @Override
+    public String toString() {                 // override Object's version
+        return "Dog(" + name + ", age " + age + ")";
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog d = new Dog("Rex", 3);
+        System.out.println(d);        // println calls toString() for you
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ You've been using Object all along</div>
+      <p>Because <code>Dog</code> automatically extends <code>Object</code>, it already had a <code>toString()</code> before you wrote one — it just printed a messy code like <code>Dog@1b6d3586</code>. Overriding <code>toString()</code> replaces that with your own readable text. Every class you've ever written sits at the bottom of one giant family tree with <code>Object</code> at the very top.</p>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE ── -->
+  <div class="content-section">
+    <div class="section-label">Exercise — 15 Minutes</div>
+    <div class="exercise-header">
+      <span class="ex-icon">⌨️</span>
+      <span class="ex-label">Coding Challenge</span>
+      <span class="ex-time">⏱ ~15 min</span>
+    </div>
+    <div class="exercise-section">
+
+      <div class="exercise-task">
+        <p><strong>Task 1 — Vehicle → Car</strong><br/>
+        Write a <code>Vehicle</code> class with a method <code>void start()</code> that prints <code>"Starting engine..."</code>. Then write <code>class Car extends Vehicle</code> that adds a method <code>void honk()</code> printing <code>"Beep beep!"</code>. In <code>main</code>, build a <code>Car</code> and call <strong>both</strong> <code>start()</code> and <code>honk()</code>.</p>
+        <p style="font-size:.82rem;color:#6b7280;margin-top:6px;"><em>Hint: <code>start()</code> is inherited, so a Car can call it even though you only wrote it in Vehicle.</em></p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h8-1')">Show hint</button>
+      <div class="hint-box" id="h8-1">
+        <p><code>class Vehicle { void start(){ System.out.println("Starting engine..."); } }</code> then <code>class Car extends Vehicle { void honk(){ System.out.println("Beep beep!"); } }</code>. In main: <code>Car c = new Car(); c.start(); c.honk();</code></p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 2 — Override makeSound()</strong><br/>
+        Write <code>class Animal</code> with <code>void makeSound()</code> that prints <code>"Some sound"</code>. Make <code>class Cow extends Animal</code> that <code>@Override</code>s <code>makeSound()</code> to print <code>"Moo!"</code>. Build a <code>Cow</code>, call <code>makeSound()</code>, and confirm you get <code>Moo!</code>.</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h8-2')">Show hint</button>
+      <div class="hint-box" id="h8-2">
+        <p>In <code>Cow</code>, copy the method's signature exactly and add the tag above it: <code>@Override void makeSound(){ System.out.println("Moo!"); }</code>. Same name, same (empty) parameter list — that's what makes it an override rather than a new method.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 3 — Polymorphism in a loop</strong><br/>
+        Using your <code>Animal</code> and <code>Cow</code> from Task 2, also make a <code>Duck</code> that prints <code>"Quack!"</code>. Put one Cow and one Duck into an <code>Animal[]</code> array, loop over it, and call <code>makeSound()</code> on each. You should see <code>Moo!</code> then <code>Quack!</code>.</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h8-3')">Show hint</button>
+      <div class="hint-box" id="h8-3">
+        <p>Build the array with both child types: <code>Animal[] farm = { new Cow(), new Duck() };</code>. Then <code>for (Animal a : farm) { a.makeSound(); }</code>. Even though the variable type is <code>Animal</code>, each object runs its own overridden version — that's polymorphism.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div class="content-section quiz-section">
+    <div class="section-label">Quick Check — 6 Questions</div>
+    <div class="q-list">
+
+      <div class="q-item">
+        <h4>1. Which keyword makes one class inherit from another?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>inherits</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>extends</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>super</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>new</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>2. In <code class="il">class Dog extends Animal</code>, which is the <strong>superclass</strong>?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,true)"><code>Animal</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>Dog</code></button>
+          <button class="q-opt" onclick="qa(this,false)">Both of them</button>
+          <button class="q-opt" onclick="qa(this,false)"><code>Object</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>3. What does <code class="il">super(name)</code> do inside a subclass constructor?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">Creates a new object</button>
+          <button class="q-opt" onclick="qa(this,true)">Calls the parent class's constructor</button>
+          <button class="q-opt" onclick="qa(this,false)">Deletes the parent class</button>
+          <button class="q-opt" onclick="qa(this,false)">Overrides a method</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>4. <strong>Overriding</strong> differs from <strong>overloading</strong> because overriding…</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">Uses a different method name</button>
+          <button class="q-opt" onclick="qa(this,true)">Re-defines a parent's method with the same name and parameters in a subclass</button>
+          <button class="q-opt" onclick="qa(this,false)">Means same name but different parameters in the same class</button>
+          <button class="q-opt" onclick="qa(this,false)">Only works on static methods</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>5. An <code class="il">Animal</code> variable holds a <code class="il">Dog</code> object. You call <code class="il">makeSound()</code>, which <code class="il">Dog</code> overrides. Which version runs?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,true)">Dog's version — Java uses the real object</button>
+          <button class="q-opt" onclick="qa(this,false)">Animal's version — Java uses the variable's type</button>
+          <button class="q-opt" onclick="qa(this,false)">Neither — it causes an error</button>
+          <button class="q-opt" onclick="qa(this,false)">Both versions run, one after the other</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>6. Every class in Java ultimately extends…</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>Main</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>System</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>Object</code></button>
+          <button class="q-opt" onclick="qa(this,false)">Nothing — classes never extend automatically</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /lesson-content -->

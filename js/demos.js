@@ -264,6 +264,38 @@ function runObjectDemo() {
     'Output:      ' + output;
 }
 
+// ─── LESSON 8 DEMO: POLYMORPHISM EXPLORER ───
+// Stores a child object in an Animal-typed variable and "calls" makeSound().
+// Shows the is-a relationship and that the OVERRIDDEN version is chosen by the
+// real object's type, not the variable's type.
+function runPolyDemo() {
+  const type = document.getElementById('poly-type').value;
+  const name = (document.getElementById('poly-name').value || '').trim();
+  const el   = document.getElementById('poly-result');
+
+  if (!name) { el.textContent = '⚠ Give the animal a name first.'; return; }
+
+  // Each subclass's overridden makeSound() behavior.
+  const sounds = {
+    Dog:    name + ' says: Woof!',
+    Cat:    name + ' says: Meow!',
+    Cow:    name + ' says: Moo!',
+    Animal: name + ' makes a sound.'
+  };
+  const overrides = type !== 'Animal';
+
+  el.textContent =
+    'Animal a = new ' + type + '("' + name + '");\n\n' +
+    'Is-a check:   a ' + type + ' IS-A Animal? ' + (type === 'Animal' ? 'yes (it IS Animal)' : 'yes ✓') + '\n' +
+    'Variable type: Animal\n' +
+    'Real object:   ' + type + '\n\n' +
+    'a.makeSound();\n' +
+    '   → ' + sounds[type] + '\n\n' +
+    (overrides
+      ? '// Java ran ' + type + "'s OVERRIDDEN makeSound(),\n// chosen by the real object — not the Animal variable type."
+      : '// No override here, so the base Animal version runs.');
+}
+
 // ─── DEMO 1: TYPE CASTING EXPLORER ───
 function runCast() {
   const v = parseFloat(document.getElementById('cast-val').value);
