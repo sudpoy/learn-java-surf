@@ -6,7 +6,7 @@ const lessons = [
   {num:4,  title:'Arrays',                      sub:'1D · 2D · algorithms · Arrays API',        color:'#10b981', live:true},
   {num:5,  title:'Methods',                     sub:'parameters · overloading · scope',          color:'#f59e0b', live:true},
   {num:6,  title:'Recursion',                   sub:'base case · call stack · patterns',         color:'#ef4444', live:true},
-  {num:7,  title:'Classes & Objects',           sub:'fields · constructors · this',             color:'#ec4899', live:false},
+  {num:7,  title:'Classes & Objects',           sub:'fields · constructors · this',             color:'#ec4899', live:true},
   {num:8,  title:'Encapsulation & Inheritance', sub:'private · extends · @Override',            color:'#f97316', live:false},
   {num:9,  title:'Strings & StringBuilder',     sub:'String API · immutability · parsing',      color:'#14b8a6', live:false},
   {num:10, title:'Collections',                 sub:'ArrayList · HashMap · generics',           color:'#6366f1', live:false},

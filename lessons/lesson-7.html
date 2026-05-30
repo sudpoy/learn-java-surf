@@ -1,15 +1,416 @@
 <div class="lesson-header">
   <div class="lesson-badge"><span class="dot" style="background:#ec4899"></span>Week 7 of 10</div>
-  <h2>OOP — Classes &amp; Objects</h2>
-  <p class="desc">Fields, constructors, the this keyword, instance methods, and arrays of objects.</p>
+  <h2>Classes &amp; Objects</h2>
+  <p class="desc">This is the big one — the heart of Java. So far your programs have been lists of instructions. Now you'll learn to build your own <strong>things</strong>: a Dog, a player, a bank account. A <strong>class</strong> is a blueprint, and an <strong>object</strong> is a real thing built from that blueprint. This idea is called Object-Oriented Programming, and it's how almost all real Java is written.</p>
   <div class="lesson-stats">
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Lecture: <strong>~40 min</strong></span></div>
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Exercise: <strong>~15 min</strong></span></div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Lecture: <strong>~40 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span>Exercise: <strong>~15 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Topics: <strong>class · object · fields · new · constructor · this · static · encapsulation</strong></span>
+    </div>
   </div>
 </div>
-<div class="coming-soon">
-  <div class="cs-num">07</div>
-  <h3>Coming Soon</h3>
-  <p>Fields, constructors, the this keyword, instance methods, and arrays of objects.</p>
-  <div class="cs-topics"><span class="cs-topic">Class vs object</span><span class="cs-topic">Constructors</span><span class="cs-topic">this keyword</span><span class="cs-topic">toString()</span><span class="cs-topic">Object arrays</span></div>
-</div>
+
+<div class="lesson-content">
+
+  <!-- ── 7.1 CLASS VS OBJECT ── -->
+  <div class="content-section">
+    <div class="section-label">Part 1 — A Blueprint and the Things Built From It</div>
+
+    <p class="body">Think about a <strong>cookie cutter</strong>. The cutter itself isn't a cookie — it's the <em>shape</em> that decides what every cookie will look like. Press it into dough and you get an actual cookie. Press it again and you get another, and another. One cutter, many cookies.</p>
+
+    <p class="body">In Java, a <strong>class</strong> is the cookie cutter, and an <strong>object</strong> is each cookie you make with it. The class describes <em>what every object will be like</em> — what information it holds and what it can do. An object is one real, individual thing built from that description.</p>
+
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th>Class (the blueprint)</th><th>Object (a real thing built from it)</th></tr>
+      <tr><td>Written once</td><td>You can build as many as you want</td></tr>
+      <tr class="hl"><td>Describes the shape: "a Dog has a name and an age"</td><td>Holds actual values: name = "Rex", age = 3</td></tr>
+      <tr><td>Doesn't do anything on its own</td><td>Exists in memory; you can use it</td></tr>
+    </table>
+
+    <p class="body">Here's our first class — a <code class="il">Dog</code> blueprint — and one object built from it. The <code class="il">Dog</code> class lists what every dog has; <code class="il">main</code> builds a single dog and fills in its details:</p>
+    <pre><code class="language-java">class Dog {
+    String name;     // every Dog will have a name
+    String breed;    // ...a breed
+    int age;         // ...and an age
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog d = new Dog();          // build ONE dog from the blueprint
+        d.name = "Rex";             // fill in this dog's details
+        d.breed = "Labrador";
+        d.age = 3;
+        System.out.println(d.name + " is a " + d.age + "-year-old " + d.breed + ".");
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Two classes in one file</div>
+      <p>Notice there are <strong>two</strong> classes here: <code>Dog</code> (our blueprint) and <code>Main</code> (where the program starts). That's totally normal. The program always begins in <code>main</code>, just like before — but now <code>main</code> can build and use <code>Dog</code> objects. The dot (<code>d.name</code>) means "reach into object <code>d</code> and get its <code>name</code>."</p>
+    </div>
+  </div>
+
+  <!-- ── 7.2 FIELDS & NEW ── -->
+  <div class="content-section">
+    <div class="section-label">Part 2 — Fields &amp; Building Objects with new</div>
+
+    <p class="body">The variables inside a class — like <code class="il">name</code>, <code class="il">breed</code>, and <code class="il">age</code> — are called <strong>fields</strong> (also "instance variables"). They're the <em>information each object carries</em>. The keyword <code class="il">new</code> is what actually builds an object: it's the construction crew that takes the blueprint and makes a real thing in memory.</p>
+
+    <p class="body">What's in a brand-new object before you fill it in? Java gives every field a <strong>default value</strong>: numbers start at <code class="il">0</code>, and object types like <code class="il">String</code> start at <code class="il">null</code> (meaning "nothing here yet").</p>
+    <pre><code class="language-java">class Dog {
+    String name;
+    int age;
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog a = new Dog();                       // a fresh, empty dog
+        System.out.println("Fresh name: " + a.name);   // null
+        System.out.println("Fresh age:  " + a.age);    // 0
+
+        a.name = "Buddy";                        // now give it real values
+        a.age = 5;
+        System.out.println(a.name + " is now " + a.age + ".");
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ The variable is not the object</div>
+      <p><code>Dog a = new Dog();</code> has two halves. <code>new Dog()</code> builds the actual object; <code>Dog a</code> is just a <em>label</em> pointing at it (called a reference). Filling in fields one by one works, but it's easy to forget one. The next part shows a much cleaner way to build a fully set-up object in a single step.</p>
+    </div>
+  </div>
+
+  <!-- ── 7.3 CONSTRUCTORS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 3 — Constructors: Setting Up a New Object</div>
+
+    <p class="body">Setting every field by hand is tedious. A <strong>constructor</strong> fixes that: it's a special block that runs <em>automatically</em> the moment an object is built with <code class="il">new</code>. Give it parameters, and you can create a fully-prepared object in one line. A constructor has the <strong>same name as the class</strong> and <strong>no return type</strong>.</p>
+    <pre><code class="language-java">class Dog {
+    String name;
+    int age;
+
+    Dog(String name, int age) {   // CONSTRUCTOR — same name as the class
+        this.name = name;         // store the values into this object's fields
+        this.age = age;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog d = new Dog("Rex", 3);   // build AND set up, all in one line
+        System.out.println(d.name + " is " + d.age + " years old.");
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 What is <code>this</code>?</div>
+      <p>Inside the constructor, the parameter is also called <code>name</code> — so how does Java know which is which? <code>this.name</code> means "the <strong>field</strong> belonging to this particular object," while plain <code>name</code> is the parameter that was passed in. So <code>this.name = name;</code> reads as "set this object's name field to the value I was handed." You'll see <code>this</code> a lot — it always means "the object I'm working on right now."</p>
+    </div>
+  </div>
+
+  <!-- ── 7.4 INSTANCE METHODS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 4 — Giving Objects Behavior (Methods)</div>
+
+    <p class="body">Objects don't just <em>hold</em> data — they can <em>do</em> things. A method written inside a class is an <strong>instance method</strong>: it belongs to each object and can use that object's own fields directly. Let's teach our Dog to bark and to have a birthday:</p>
+    <pre><code class="language-java">class Dog {
+    String name;
+    int age;
+
+    Dog(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    void bark() {
+        System.out.println(name + " says: Woof!");   // uses THIS dog's name
+    }
+
+    void haveBirthday() {
+        age = age + 1;                                // changes THIS dog's age
+        System.out.println(name + " is now " + age + ".");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog d = new Dog("Rex", 3);
+        d.bark();
+        d.haveBirthday();
+        d.haveBirthday();
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Methods act on their own object</div>
+      <p>When you call <code>d.bark()</code>, the method automatically uses <code>d</code>'s fields — its <code>name</code>, its <code>age</code>. If you built a second dog and called <code>other.bark()</code>, it would use that dog's name instead. The same method, written once, behaves differently for each object because each object has its own data.</p>
+    </div>
+  </div>
+
+  <!-- ── 7.5 INSTANCE VS STATIC ── -->
+  <div class="content-section">
+    <div class="section-label">Part 5 — Instance vs. static (Why main Is static)</div>
+
+    <p class="body">Back in Lesson 5, every helper method was <code class="il">static</code>, and <code class="il">main</code> is <code class="il">static</code> too. Now you can finally see what that word means. <strong>static</strong> means "belongs to the <em>class itself</em>, not to any one object" — so it can run <em>without</em> building an object first. That's exactly why <code class="il">main</code> is static: Java needs to start your program before any objects exist.</p>
+
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th></th><th>Instance (no <code>static</code>)</th><th><code>static</code></th></tr>
+      <tr><td>Belongs to</td><td>Each individual object</td><td>The whole class</td></tr>
+      <tr class="hl"><td>Copies</td><td>One per object (each dog its own)</td><td>Just one, shared by all</td></tr>
+      <tr><td>Called on</td><td>An object: <code>d.bark()</code></td><td>The class: <code>Dog.dogCount</code></td></tr>
+    </table>
+
+    <p class="body">A <code class="il">static</code> field is shared by every object of the class — perfect for something like "how many dogs have been created in total," which isn't about any single dog:</p>
+    <pre><code class="language-java">class Dog {
+    static int dogCount = 0;   // ONE counter, shared by all dogs
+    String name;               // each dog gets its OWN name
+
+    Dog(String name) {
+        this.name = name;
+        dogCount++;            // every time a dog is born, bump the shared count
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog a = new Dog("Rex");
+        Dog b = new Dog("Luna");
+        Dog c = new Dog("Max");
+        System.out.println("Names: " + a.name + ", " + b.name + ", " + c.name);
+        System.out.println("Dogs created: " + Dog.dogCount);   // on the CLASS, not an object
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 The rule of thumb</div>
+      <p>If something belongs to <strong>one specific object</strong> (this dog's name, this account's balance), it's an <strong>instance</strong> field or method — no <code>static</code>. If it belongs to the <strong>idea of the class as a whole</strong> (a total count, or a helper like the math methods from Lesson 5), it's <code>static</code>. Most of what you write on your own classes will be instance members.</p>
+    </div>
+  </div>
+
+  <!-- ── 7.6 ENCAPSULATION ── -->
+  <div class="content-section">
+    <div class="section-label">Part 6 — Protecting Your Data (a Gentle Intro to Encapsulation)</div>
+
+    <p class="body">Imagine a bank where anyone could reach into the vault and change the numbers directly. Disaster! Real banks make you go through a <strong>slot</strong> — a deposit window, an ATM — that checks every request. In Java, hiding a field with <code class="il">private</code> and only allowing access through methods is called <strong>encapsulation</strong>. It keeps an object's data safe and valid.</p>
+
+    <p class="body">Mark a field <code class="il">private</code> and code outside the class can't touch it directly. Instead you offer methods: a <strong>getter</strong> to read the value, and a method like <code class="il">deposit</code> (a kind of setter) that <em>guards</em> changes:</p>
+    <pre><code class="language-java">class BankAccount {
+    private double balance;          // hidden — no outside code can change it directly
+
+    public void deposit(double amount) {
+        if (amount > 0) {            // the guard: only allow sensible deposits
+            balance = balance + amount;
+        }
+    }
+
+    public double getBalance() {     // a "getter" — lets others READ the balance
+        return balance;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        BankAccount acc = new BankAccount();
+        acc.deposit(100);
+        acc.deposit(50);
+        acc.deposit(-9999);          // rejected by the guard — balance is protected
+        System.out.println("Balance: " + acc.getBalance());
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ private really means private</div>
+      <p>Because <code>balance</code> is <code>private</code>, a line like <code>acc.balance = 999999;</code> written in <code>main</code> wouldn't even <em>compile</em> — Java blocks it. That's the point: the only way to change the balance is through <code>deposit</code>, which checks the amount first. The object stays in a valid state no matter what. You'll go much deeper on this in Lesson 8.</p>
+    </div>
+  </div>
+
+  <!-- ── 7.7 MULTIPLE OBJECTS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 7 — Many Objects, Each With Its Own State</div>
+
+    <p class="body">Here's the real payoff. From one class you can build as many objects as you like, and <strong>each one keeps its own separate data</strong>. Changing one object never touches another — just like decorating one cookie doesn't change the others on the tray.</p>
+    <pre><code class="language-java">class Dog {
+    String name;
+    int age;
+
+    Dog(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    void describe() {
+        System.out.println(name + " is " + age + " years old.");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog rex  = new Dog("Rex", 3);
+        Dog luna = new Dog("Luna", 7);
+
+        rex.describe();
+        luna.describe();
+
+        rex.age = 4;             // changes ONLY Rex
+        System.out.println("--- after Rex's birthday ---");
+        rex.describe();
+        luna.describe();         // Luna is untouched
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Two labels, two separate dogs</div>
+      <p><code>rex</code> and <code>luna</code> point at two completely separate objects, each with its own <code>name</code> and <code>age</code> in memory. That's why bumping <code>rex.age</code> leaves <code>luna.age</code> alone. One blueprint, many independent objects — that's the whole power of classes.</p>
+    </div>
+
+    <!-- Interactive Demo: Object Builder -->
+    <div class="demo-wrap" style="margin-top:24px;">
+      <div class="demo-header">
+        <div class="demo-dot" style="background:#ec4899"></div>
+        <div class="demo-dot" style="background:#f59e0b;margin-left:4px"></div>
+        <div class="demo-dot" style="background:#10b981;margin-left:4px"></div>
+        <span class="label" style="margin-left:8px">Interactive — Object Builder</span>
+      </div>
+      <div class="demo-body">
+        <p>Construct a <code>Dog</code> object from the blueprint, then call one of its methods. Watch how the object holds its <em>own</em> state and how a method can change it.</p>
+        <div class="form-row">
+          <label>new Dog(</label>
+          <input class="demo-input" id="obj-name" type="text" value="Rex" style="width:90px"/>
+          <label>,</label>
+          <input class="demo-input" id="obj-age" type="number" value="3" min="0" style="width:64px"/>
+          <label>)</label>
+          <select class="demo-select" id="obj-op">
+            <option value="bark">.bark()</option>
+            <option value="haveBirthday">.haveBirthday()</option>
+            <option value="describe">.describe()</option>
+          </select>
+          <button class="run-btn" onclick="runObjectDemo()">Build ▶</button>
+        </div>
+        <div class="demo-result" id="obj-result">Click Build to construct a Dog object...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE ── -->
+  <div class="content-section">
+    <div class="section-label">Exercise — 15 Minutes</div>
+    <div class="exercise-header">
+      <span class="ex-icon">⌨️</span>
+      <span class="ex-label">Coding Challenge</span>
+      <span class="ex-time">⏱ ~15 min</span>
+    </div>
+    <div class="exercise-section">
+
+      <div class="exercise-task">
+        <p><strong>Task 1 — A Cat class</strong><br/>
+        Write a <code>Cat</code> class with a <code>String name</code> field, a constructor <code>Cat(String name)</code>, and a method <code>void meow()</code> that prints <code>name + " says: Meow!"</code>. In <code>main</code>, build a cat named <code>"Whiskers"</code> and call <code>meow()</code>.</p>
+        <p style="font-size:.82rem;color:#6b7280;margin-top:6px;"><em>Hint: keep <code>Cat</code> as a separate class and leave <code>public class Main</code> for <code>main</code>.</em></p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h7-1')">Show hint</button>
+      <div class="hint-box" id="h7-1">
+        <p>Structure it like the Dog example: <code>class Cat { String name; Cat(String name){ this.name = name; } void meow(){ System.out.println(name + " says: Meow!"); } }</code> then in main: <code>Cat c = new Cat("Whiskers"); c.meow();</code></p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 2 — A Rectangle that knows its area</strong><br/>
+        Write a <code>Rectangle</code> class with <code>int width</code> and <code>int height</code> fields, a constructor that sets both, and a method <code>int area()</code> that <em>returns</em> <code>width * height</code>. Build a 4×6 rectangle and print its area (you should get 24).</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h7-2')">Show hint</button>
+      <div class="hint-box" id="h7-2">
+        <p>The constructor takes two parameters: <code>Rectangle(int width, int height){ this.width = width; this.height = height; }</code>. The method returns a value: <code>int area(){ return width * height; }</code>. Then <code>Rectangle r = new Rectangle(4, 6); System.out.println(r.area());</code></p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 3 — Two Players, two scores</strong><br/>
+        Write a <code>Player</code> class with an <code>int score</code> (starts at 0) and a method <code>void addPoints(int p)</code> that adds <code>p</code> to the score. Create <strong>two</strong> players, add different points to each, and print both scores to prove they're independent.</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h7-3')">Show hint</button>
+      <div class="hint-box" id="h7-3">
+        <p>A field can start at 0 by default, so you may not even need a constructor. <code>class Player { int score; void addPoints(int p){ score = score + p; } }</code>. Make two: <code>Player p1 = new Player(); Player p2 = new Player();</code> then <code>p1.addPoints(10); p2.addPoints(3);</code> and print <code>p1.score</code> and <code>p2.score</code> — they hold separate values.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div class="content-section quiz-section">
+    <div class="section-label">Quick Check — 6 Questions</div>
+    <div class="q-list">
+
+      <div class="q-item">
+        <h4>1. What's the difference between a <strong>class</strong> and an <strong>object</strong>?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">They're two words for the same thing</button>
+          <button class="q-opt" onclick="qa(this,true)">A class is a blueprint; an object is a real thing built from it</button>
+          <button class="q-opt" onclick="qa(this,false)">A class is built from an object</button>
+          <button class="q-opt" onclick="qa(this,false)">A class can only ever make one object</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>2. What does the keyword <code class="il">new</code> do?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,true)">Builds (creates) a new object from a class</button>
+          <button class="q-opt" onclick="qa(this,false)">Deletes an object</button>
+          <button class="q-opt" onclick="qa(this,false)">Renames a variable</button>
+          <button class="q-opt" onclick="qa(this,false)">Makes a field private</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>3. What is a <strong>constructor</strong> for?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">To delete an object when you're done with it</button>
+          <button class="q-opt" onclick="qa(this,true)">To set up a new object's starting values when it is created</button>
+          <button class="q-opt" onclick="qa(this,false)">To print an object</button>
+          <button class="q-opt" onclick="qa(this,false)">To loop over all objects of a class</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>4. In <code class="il">this.name = name;</code>, what does <code class="il">this</code> refer to?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">The class blueprint</button>
+          <button class="q-opt" onclick="qa(this,false)">The very first object ever made</button>
+          <button class="q-opt" onclick="qa(this,true)">The particular object the method is working on right now</button>
+          <button class="q-opt" onclick="qa(this,false)">A static variable shared by all objects</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>5. A field marked <code class="il">static</code> is…</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">Different for every object</button>
+          <button class="q-opt" onclick="qa(this,true)">Shared — there's just one copy for the whole class</button>
+          <button class="q-opt" onclick="qa(this,false)">Impossible to read</button>
+          <button class="q-opt" onclick="qa(this,false)">Automatically private</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>6. Why would you make a field <code class="il">private</code>?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">To make the program run faster</button>
+          <button class="q-opt" onclick="qa(this,false)">So that no method can ever use it</button>
+          <button class="q-opt" onclick="qa(this,true)">To protect the data, so it can only be changed through controlled methods</button>
+          <button class="q-opt" onclick="qa(this,false)">To make it shared across every object</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /lesson-content -->

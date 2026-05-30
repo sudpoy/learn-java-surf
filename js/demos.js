@@ -227,6 +227,43 @@ function runRecursionDemo() {
   el.textContent = lines.join('\n');
 }
 
+// ─── LESSON 7 DEMO: OBJECT BUILDER ───
+// Constructs a Dog object from the class "blueprint", shows the object's own
+// state (its fields), then runs a chosen instance method — illustrating that
+// each object holds its own data and that methods can change that state.
+function runObjectDemo() {
+  const name = (document.getElementById('obj-name').value || '').trim();
+  const age  = parseInt(document.getElementById('obj-age').value, 10);
+  const op   = document.getElementById('obj-op').value;
+  const el   = document.getElementById('obj-result');
+
+  if (!name) { el.textContent = '⚠ Give the dog a name first.'; return; }
+  if (isNaN(age) || age < 0) { el.textContent = '⚠ Enter an age of 0 or more.'; return; }
+
+  let call, output, shownAge = age, ageNote = '';
+  if (op === 'haveBirthday') {
+    call = 'd.haveBirthday();';
+    shownAge = age + 1;
+    ageNote = '   // the method changed it!';
+    output = name + ' is now ' + shownAge + '.';
+  } else if (op === 'describe') {
+    call = 'd.describe();';
+    output = name + ' is ' + age + ' years old.';
+  } else {
+    call = 'd.bark();';
+    output = name + ' says: Woof!';
+  }
+
+  el.textContent =
+    '// Build one real object from the Dog blueprint:\n' +
+    'Dog d = new Dog("' + name + '", ' + age + ');\n\n' +
+    "This object's own state:\n" +
+    '    d.name = "' + name + '"\n' +
+    '    d.age  = ' + shownAge + ageNote + '\n\n' +
+    'You called:  ' + call + '\n' +
+    'Output:      ' + output;
+}
+
 // ─── DEMO 1: TYPE CASTING EXPLORER ───
 function runCast() {
   const v = parseFloat(document.getElementById('cast-val').value);
