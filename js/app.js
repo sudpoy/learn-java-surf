@@ -4,7 +4,7 @@ const lessons = [
   {num:2,  title:'Control Flow',                sub:'if · switch · ternary · booleans',         color:'#8b5cf6', live:true},
   {num:3,  title:'Loops',                       sub:'for · while · do-while · break/continue',  color:'#06b6d4', live:true},
   {num:4,  title:'Arrays',                      sub:'1D · 2D · algorithms · Arrays API',        color:'#10b981', live:true},
-  {num:5,  title:'Methods',                     sub:'parameters · overloading · scope',          color:'#f59e0b', live:false},
+  {num:5,  title:'Methods',                     sub:'parameters · overloading · scope',          color:'#f59e0b', live:true},
   {num:6,  title:'Recursion',                   sub:'base case · call stack · patterns',         color:'#ef4444', live:false},
   {num:7,  title:'Classes & Objects',           sub:'fields · constructors · this',             color:'#ec4899', live:false},
   {num:8,  title:'Encapsulation & Inheritance', sub:'private · extends · @Override',            color:'#f97316', live:false},

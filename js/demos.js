@@ -144,6 +144,42 @@ function runArrayDemo() {
     `Access:  ${access}`;
 }
 
+// ─── LESSON 5 DEMO: METHOD MACHINE ───
+// Shows the input -> process -> output shape of a method: takes two
+// parameters, runs the chosen operation, and hands back a return value.
+function runMethodDemo() {
+  const a  = parseInt(document.getElementById('m-a').value, 10);
+  const b  = parseInt(document.getElementById('m-b').value, 10);
+  const op = document.getElementById('m-op').value;
+  const el = document.getElementById('m-result');
+
+  if (isNaN(a) || isNaN(b)) {
+    el.textContent = '⚠ Enter two whole numbers for a and b.';
+    return;
+  }
+
+  let name, body, result;
+  if (op === 'subtract') {
+    name = 'subtract'; body = 'return a - b;'; result = a - b;
+  } else if (op === 'multiply') {
+    name = 'multiply'; body = 'return a * b;'; result = a * b;
+  } else if (op === 'max') {
+    name = 'max'; body = 'return (a > b) ? a : b;'; result = Math.max(a, b);
+  } else {
+    name = 'add'; body = 'return a + b;'; result = a + b;
+  }
+
+  el.textContent =
+    `// The method:\n` +
+    `static int ${name}(int a, int b) {\n` +
+    `    ${body}\n` +
+    `}\n\n` +
+    `You called:   ${name}(${a}, ${b})\n` +
+    `Inside:       a = ${a}, b = ${b}\n` +
+    `Returned:     ${result}\n\n` +
+    `int answer = ${name}(${a}, ${b});   // answer is now ${result}`;
+}
+
 // ─── DEMO 1: TYPE CASTING EXPLORER ───
 function runCast() {
   const v = parseFloat(document.getElementById('cast-val').value);

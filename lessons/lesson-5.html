@@ -1,15 +1,359 @@
 <div class="lesson-header">
   <div class="lesson-badge"><span class="dot" style="background:#f59e0b"></span>Week 5 of 10</div>
   <h2>Methods</h2>
-  <p class="desc">Parameters, return types, overloading, scope, and the Math library.</p>
+  <p class="desc">Stop repeating yourself. A method is a named, reusable block of code you can run whenever you need it — give it inputs, get a result back. Learn to declare, call, pass parameters, return values, and even reuse one name for several jobs.</p>
   <div class="lesson-stats">
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Lecture: <strong>~40 min</strong></span></div>
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Exercise: <strong>~15 min</strong></span></div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Lecture: <strong>~40 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span>Exercise: <strong>~15 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Topics: <strong>declare · call · parameters · return · scope · overloading</strong></span>
+    </div>
   </div>
 </div>
-<div class="coming-soon">
-  <div class="cs-num">05</div>
-  <h3>Coming Soon</h3>
-  <p>Parameters, return types, overloading, scope, and the Math library.</p>
-  <div class="cs-topics"><span class="cs-topic">Parameters</span><span class="cs-topic">Return types</span><span class="cs-topic">Overloading</span><span class="cs-topic">Scope</span><span class="cs-topic">Math library</span></div>
-</div>
+
+<div class="lesson-content">
+
+  <!-- ── 5.1 WHY METHODS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 1 — What Is a Method &amp; Why Use One</div>
+
+    <p class="body">Imagine the buttons on a microwave. You press "Popcorn" and a whole sequence of steps runs — you don't re-program it every time. A <strong>method</strong> is exactly that: you write a block of code once, give it a name, and then "press the button" (call it) whenever you want it to run.</p>
+
+    <p class="body">The big reason is <strong>DRY — Don't Repeat Yourself</strong>. If you copy-paste the same lines in five places and later find a bug, you have to fix it five times. Put it in a method, and you fix it <em>once</em>. Methods also give messy code structure, like chapters in a book.</p>
+
+    <h3 class="topic">Write Once, Call Many Times</h3>
+    <p class="body">Here <code class="il">greet</code> is defined once but called three times. Notice the program always <em>starts</em> in <code class="il">main</code>, then jumps to a method when it's called and comes back afterward:</p>
+    <pre><code class="language-java">public class Main {
+
+    // A method: a named, reusable block of code
+    static void greet() {
+        System.out.println("Hello there!");
+        System.out.println("Welcome to Java.");
+    }
+
+    public static void main(String[] args) {
+        greet();              // "press the button"...
+        greet();              // ...as many times as you like
+        System.out.println("----");
+        greet();
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Execution always begins in main</div>
+      <p>Java runs <code>main</code> first. When it reaches <code>greet()</code>, it pauses, runs every line inside <code>greet</code>, then returns to exactly where it left off and continues. A method does nothing until it is <em>called</em>.</p>
+    </div>
+  </div>
+
+  <!-- ── 5.2 ANATOMY ── -->
+  <div class="content-section">
+    <div class="section-label">Part 2 — Anatomy of a Method</div>
+
+    <p class="body">Every method declaration has the same four pieces. Here's <code class="il">static int square(int n)</code> taken apart:</p>
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th>Part</th><th>Example</th><th>What it means</th></tr>
+      <tr><td>Modifier</td><td><code>static</code></td><td>Lets you call it directly, without building an object first</td></tr>
+      <tr class="hl"><td>Return type</td><td><code>int</code></td><td>The kind of value handed back (<code>void</code> means nothing is returned)</td></tr>
+      <tr><td>Name</td><td><code>square</code></td><td>What you type to call it — pick a clear, verb-like name</td></tr>
+      <tr class="hl"><td>Parameters</td><td><code>(int n)</code></td><td>The inputs it needs, each with a type, inside parentheses</td></tr>
+    </table>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Why <code>static</code> for now</div>
+      <p>For this lesson, every method is <code>static</code>. That keyword means the method belongs to the program itself, so <code>main</code> (which is also <code>static</code>) can call it directly. In Lesson 7 you'll meet non-static methods that belong to individual <em>objects</em> — but one step at a time.</p>
+    </div>
+  </div>
+
+  <!-- ── 5.3 PARAMETERS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 3 — Parameters &amp; Arguments</div>
+
+    <p class="body">A method becomes far more useful when you can feed it different inputs. A <strong>parameter</strong> is the placeholder named in the method's parentheses; the <strong>argument</strong> is the actual value you hand over when you call it. Same idea, two names — depending on which side you're looking from.</p>
+    <pre><code class="language-java">public class Main {
+
+    // 'name' is the PARAMETER — a placeholder for whatever is passed in
+    static void greetUser(String name) {
+        System.out.println("Hello, " + name + "!");
+    }
+
+    public static void main(String[] args) {
+        greetUser("Mia");     // "Mia" is the ARGUMENT we pass in
+        greetUser("Leo");
+        greetUser("Ava");
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Parameter vs argument</div>
+      <p>Easy way to keep them straight: the <strong>parameter</strong> is what the method <em>expects</em> (written when you define it); the <strong>argument</strong> is what you actually <em>give</em> it (written when you call it). The argument's type must match the parameter's type.</p>
+    </div>
+  </div>
+
+  <!-- ── 5.4 RETURN VALUES ── -->
+  <div class="content-section">
+    <div class="section-label">Part 4 — Return Values vs void</div>
+
+    <p class="body">So far our methods just <em>did</em> something (printed text) and returned nothing — that's what <code class="il">void</code> means. But often you want a method to <strong>compute an answer and hand it back</strong> so you can use it. That's a <strong>return value</strong>, and the return type goes where <code class="il">void</code> used to be.</p>
+    <pre><code class="language-java">public class Main {
+
+    // Returns an int instead of printing it
+    static int square(int n) {
+        return n * n;          // hand the answer back to the caller
+    }
+
+    public static void main(String[] args) {
+        int result = square(5);                 // capture the value in a variable
+        System.out.println("5 squared is " + result);
+        System.out.println("9 squared is " + square(9));   // or use it directly
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ return ends the method immediately</div>
+      <p>As soon as a <code>return</code> runs, the method stops and jumps back to the caller — any code after it on that path won't run. A method declared with a return type (like <code>int</code>) <strong>must</strong> return a value of that type on every path.</p>
+    </div>
+
+    <h3 class="topic">Returning a true/false Answer</h3>
+    <p class="body">Methods can return any type — including <code class="il">boolean</code>. A method that answers a yes/no question reads beautifully inside an <code class="il">if</code>:</p>
+    <pre><code class="language-java">public class Main {
+
+    static boolean isEven(int n) {
+        return n % 2 == 0;     // true when n divides evenly by 2
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {7, 10, 13, 4};
+        for (int n : nums) {
+            if (isEven(n)) {
+                System.out.println(n + " is even");
+            } else {
+                System.out.println(n + " is odd");
+            }
+        }
+    }
+}</code></pre>
+  </div>
+
+  <!-- ── 5.5 MULTIPLE PARAMETERS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 5 — Multiple Parameters</div>
+
+    <p class="body">A method can take several inputs — just separate the parameters with commas. The <strong>order matters</strong>: the first argument fills the first parameter, the second fills the second, and so on.</p>
+    <pre><code class="language-java">public class Main {
+
+    static int rectangleArea(int width, int height) {
+        return width * height;
+    }
+
+    static String fullName(String first, String last) {
+        return first + " " + last;
+    }
+
+    public static void main(String[] args) {
+        int area = rectangleArea(4, 6);          // width = 4, height = 6
+        System.out.println("Area: " + area);
+        System.out.println("Name: " + fullName("Ada", "Lovelace"));
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Order and type must line up</div>
+      <p>If a method expects <code>(int width, int height)</code>, you must pass two ints in that order. Calling <code>rectangleArea(4, 6)</code> sets width to 4 and height to 6 — swap them and you'd get a different rectangle. Java also checks the types match.</p>
+    </div>
+  </div>
+
+  <!-- ── 5.6 SCOPE ── -->
+  <div class="content-section">
+    <div class="section-label">Part 6 — Scope of Local Variables</div>
+
+    <p class="body">A variable created inside a method is <strong>local</strong> to it — it's born when the method starts and disappears when it ends. Code outside can't see it. Also, when you pass a number to a method, Java hands over a <em>copy</em> of the value, so changing the parameter inside doesn't touch the original back in <code class="il">main</code>.</p>
+    <pre><code class="language-java">public class Main {
+
+    static void tryToChange(int x) {
+        x = 999;                 // changes only this method's own copy
+        int secret = 42;         // 'secret' exists only inside this method
+        System.out.println("Inside the method:  x = " + x + ", secret = " + secret);
+    }
+
+    public static void main(String[] args) {
+        int score = 10;
+        tryToChange(score);
+        System.out.println("Back in main:        score = " + score);  // still 10!
+        // System.out.println(secret); // ERROR: 'secret' does not exist out here
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Each method has its own world</div>
+      <p>The <code>x</code> inside <code>tryToChange</code> and the <code>score</code> in <code>main</code> are completely separate variables, even though one was copied from the other. This is why methods are safe to reuse — they can't accidentally trample variables elsewhere in your program.</p>
+    </div>
+  </div>
+
+  <!-- ── 5.7 OVERLOADING ── -->
+  <div class="content-section">
+    <div class="section-label">Part 7 — A Gentle Intro to Overloading</div>
+
+    <p class="body">Java lets you give <strong>several methods the same name</strong>, as long as their parameter lists differ (different number or types of parameters). This is called <strong>overloading</strong>. Java figures out which one you meant by looking at the arguments you pass.</p>
+    <pre><code class="language-java">public class Main {
+
+    static int add(int a, int b) {
+        return a + b;
+    }
+    static int add(int a, int b, int c) {     // same name, three parameters
+        return a + b + c;
+    }
+    static double add(double a, double b) {   // same name, double parameters
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(add(2, 3));         // picks the two-int version
+        System.out.println(add(2, 3, 4));      // picks the three-int version
+        System.out.println(add(2.5, 1.5));     // picks the double version
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 You already use overloading</div>
+      <p><code>System.out.println</code> is overloaded! There's a version for ints, one for Strings, one for doubles, and more — that's why you can print almost anything with the same method name. Overloading keeps related jobs under one easy-to-remember name.</p>
+    </div>
+
+    <!-- Interactive Demo: Method Machine -->
+    <div class="demo-wrap" style="margin-top:24px;">
+      <div class="demo-header">
+        <div class="demo-dot" style="background:#ef4444"></div>
+        <div class="demo-dot" style="background:#f59e0b;margin-left:4px"></div>
+        <div class="demo-dot" style="background:#10b981;margin-left:4px"></div>
+        <span class="label" style="margin-left:8px">Interactive — Method Machine</span>
+      </div>
+      <div class="demo-body">
+        <p>Pick two numbers and an operation, then watch the method take them in as parameters and hand a value back with <code>return</code>. This is the input → process → output shape of every method.</p>
+        <div class="form-row">
+          <label>a =</label>
+          <input class="demo-input" id="m-a" type="number" value="4" style="width:70px"/>
+          <label>b =</label>
+          <input class="demo-input" id="m-b" type="number" value="6" style="width:70px"/>
+          <select class="demo-select" id="m-op">
+            <option value="add">add</option>
+            <option value="subtract">subtract</option>
+            <option value="multiply">multiply</option>
+            <option value="max">max</option>
+          </select>
+          <button class="run-btn" onclick="runMethodDemo()">Call ▶</button>
+        </div>
+        <div class="demo-result" id="m-result">Click Call to run the method...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE ── -->
+  <div class="content-section">
+    <div class="section-label">Exercise — 15 Minutes</div>
+    <div class="exercise-header">
+      <span class="ex-icon">⌨️</span>
+      <span class="ex-label">Coding Challenge</span>
+      <span class="ex-time">⏱ ~15 min</span>
+    </div>
+    <div class="exercise-section">
+
+      <div class="exercise-task">
+        <p><strong>Task 1 — cube()</strong><br/>
+        Write a method <code>static int cube(int n)</code> that returns <code>n * n * n</code>. Call it from <code>main</code> for 2, 3, and 4, and print each result (you should get 8, 27, 64).</p>
+        <p style="font-size:.82rem;color:#6b7280;margin-top:6px;"><em>Hint: the return type is <code>int</code>, so the method body just needs one <code>return</code> line.</em></p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h5-1')">Show hint</button>
+      <div class="hint-box" id="h5-1">
+        <p>Define <code>static int cube(int n) { return n * n * n; }</code> next to <code>main</code>. Then in main: <code>System.out.println(cube(2));</code> and so on.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 2 — max3()</strong><br/>
+        Write <code>static int max3(int a, int b, int c)</code> that returns the largest of three numbers. Test it with <code>max3(4, 9, 2)</code> → 9 and <code>max3(7, 1, 7)</code> → 7.</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h5-2')">Show hint</button>
+      <div class="hint-box" id="h5-2">
+        <p>Start by assuming <code>a</code> is the biggest: <code>int biggest = a;</code>. Then <code>if (b &gt; biggest) biggest = b;</code> and the same for <code>c</code>. Finally <code>return biggest;</code>.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 3 — printStars()</strong><br/>
+        Write a <code>void</code> method <code>static void printStars(int n)</code> that prints a line of <code>n</code> star characters, then call it with 3, 5, and 1. (Combines methods with the loops you learned in Lesson 3.)</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h5-3')">Show hint</button>
+      <div class="hint-box" id="h5-3">
+        <p>Inside the method, loop <code>for (int i = 0; i &lt; n; i++) System.out.print("*");</code> then <code>System.out.println();</code> to end the line. It's <code>void</code> because it prints rather than returning.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div class="content-section quiz-section">
+    <div class="section-label">Quick Check — 5 Questions</div>
+    <div class="q-list">
+
+      <div class="q-item">
+        <h4>1. What does a method with a return type of <code class="il">void</code> hand back?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>0</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>null</code></button>
+          <button class="q-opt" onclick="qa(this,true)">Nothing — it just does its job</button>
+          <button class="q-opt" onclick="qa(this,false)">An empty String</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>2. In <code class="il">static int square(int n)</code>, what is <code class="il">n</code>?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,true)">A parameter — a placeholder for the input</button>
+          <button class="q-opt" onclick="qa(this,false)">The return value</button>
+          <button class="q-opt" onclick="qa(this,false)">The method's name</button>
+          <button class="q-opt" onclick="qa(this,false)">A global variable</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>3. Given <code class="il">static int triple(int n) { return n * 3; }</code>, what is <code class="il">x</code> after <code class="il">int x = triple(4);</code>?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>4</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>7</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>12</code></button>
+          <button class="q-opt" onclick="qa(this,false)">Nothing — triple is void</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>4. What makes <strong>overloading</strong> two methods legal?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">They have the same name and the same parameters</button>
+          <button class="q-opt" onclick="qa(this,true)">They share a name but have different parameter lists</button>
+          <button class="q-opt" onclick="qa(this,false)">They return different types but take the same parameters</button>
+          <button class="q-opt" onclick="qa(this,false)">They are both declared <code>void</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>5. A variable declared inside a method can be used…</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">Anywhere in the whole program</button>
+          <button class="q-opt" onclick="qa(this,true)">Only inside that method (its local scope)</button>
+          <button class="q-opt" onclick="qa(this,false)">Only inside <code>main</code></button>
+          <button class="q-opt" onclick="qa(this,false)">In any method with the same name</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /lesson-content -->
