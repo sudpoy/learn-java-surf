@@ -333,6 +333,79 @@ function runStringDemo() {
     's.' + subCall + ' -> "' + sub + '"';
 }
 
+// ─── LESSON 10 DEMO: ARRAYLIST PLAYGROUND ───
+// Keeps a live JS array standing in for an ArrayList<String> and runs the same
+// operations (add/remove/get/set/clear), showing the list grow and shrink plus
+// the Java line you'd write and what it returns.
+var _alDemoList = ["dog", "cat"];
+
+function _alRender(line) {
+  const el = document.getElementById('al-result');
+  const shown = '[' + _alDemoList.join(', ') + ']';
+  el.textContent =
+    'Java:   ' + line + '\n\n' +
+    'List:   ' + shown + '\n' +
+    'size(): ' + _alDemoList.length;
+}
+
+function resetListDemo() {
+  _alDemoList = ["dog", "cat"];
+  _alRender('ArrayList<String> list = new ArrayList<String>();  // (reset to [dog, cat])');
+}
+
+function runListDemo() {
+  const op  = document.getElementById('al-op').value;
+  const arg = (document.getElementById('al-arg').value || '').trim();
+  const el  = document.getElementById('al-result');
+  const n   = _alDemoList.length;
+
+  if (op === 'add') {
+    if (!arg) { el.textContent = '⚠ Type a value to add.'; return; }
+    _alDemoList.push(arg);
+    _alRender('list.add("' + arg + '");');
+
+  } else if (op === 'clear') {
+    _alDemoList = [];
+    _alRender('list.clear();');
+
+  } else if (op === 'remove') {
+    const i = parseInt(arg, 10);
+    if (isNaN(i)) { el.textContent = '⚠ For remove(index), enter a number like 0.'; return; }
+    if (i < 0 || i >= n) {
+      el.textContent = 'list.remove(' + i + ');\n\n→ IndexOutOfBoundsException!\n  Valid indexes are 0 to ' + (n - 1) + '.';
+      return;
+    }
+    const removed = _alDemoList.splice(i, 1)[0];
+    _alRender('list.remove(' + i + ');   // removed "' + removed + '"');
+
+  } else if (op === 'get') {
+    const i = parseInt(arg, 10);
+    if (isNaN(i)) { el.textContent = '⚠ For get(index), enter a number like 0.'; return; }
+    if (i < 0 || i >= n) {
+      el.textContent = 'list.get(' + i + ');\n\n→ IndexOutOfBoundsException!\n  Valid indexes are 0 to ' + (n - 1) + '.';
+      return;
+    }
+    el.textContent =
+      'Java:   list.get(' + i + ');\n' +
+      'Result: "' + _alDemoList[i] + '"\n\n' +
+      'List:   [' + _alDemoList.join(', ') + ']   (unchanged — get only reads)\n' +
+      'size(): ' + _alDemoList.length;
+
+  } else if (op === 'set') {
+    // arg format: "index, value" or just rely on the value box; accept "0 fish" too
+    const m = arg.match(/^\s*(\d+)\s*[, ]\s*(.+)$/);
+    if (!m) { el.textContent = '⚠ For set, type: index, value   (e.g. 0, fish)'; return; }
+    const i = parseInt(m[1], 10);
+    const v = m[2].trim();
+    if (i < 0 || i >= n) {
+      el.textContent = 'list.set(' + i + ', "' + v + '");\n\n→ IndexOutOfBoundsException!\n  Valid indexes are 0 to ' + (n - 1) + '.';
+      return;
+    }
+    _alDemoList[i] = v;
+    _alRender('list.set(' + i + ', "' + v + '");');
+  }
+}
+
 // ─── DEMO 1: TYPE CASTING EXPLORER ───
 function runCast() {
   const v = parseFloat(document.getElementById('cast-val').value);

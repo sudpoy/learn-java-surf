@@ -1,15 +1,381 @@
 <div class="lesson-header">
   <div class="lesson-badge"><span class="dot" style="background:#6366f1"></span>Week 10 of 10</div>
-  <h2>Collections — ArrayList &amp; HashMap</h2>
-  <p class="desc">Dynamic data structures, generics, and the Collections utility class.</p>
+  <h2>Collections</h2>
+  <p class="desc">The grand finale! Arrays were great, but they have one big limit: their size is locked in forever. <strong>Collections</strong> are smarter containers that grow and shrink as you need them. You'll meet the two you'll use most — the <strong>ArrayList</strong> (a stretchy list) and the <strong>HashMap</strong> (a labeled lookup) — and pull together everything you've learned across the whole course.</p>
   <div class="lesson-stats">
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Lecture: <strong>~40 min</strong></span></div>
-    <div class="stat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Exercise: <strong>~15 min</strong></span></div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Lecture: <strong>~40 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span>Exercise: <strong>~15 min</strong></span>
+    </div>
+    <div class="stat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Topics: <strong>ArrayList · add/remove/get · generics · for-each · HashMap · keys</strong></span>
+    </div>
   </div>
 </div>
-<div class="coming-soon">
-  <div class="cs-num">10</div>
-  <h3>Coming Soon</h3>
-  <p>Dynamic data structures, generics, and the Collections utility class.</p>
-  <div class="cs-topics"><span class="cs-topic">ArrayList</span><span class="cs-topic">HashMap</span><span class="cs-topic">Collections.sort()</span><span class="cs-topic">Generics intro</span><span class="cs-topic">Array vs ArrayList</span></div>
-</div>
+
+<div class="lesson-content">
+
+  <!-- ── 10.1 WHY COLLECTIONS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 1 — Why Arrays Aren't Enough</div>
+
+    <p class="body">Remember arrays from Lesson 4? They're like an egg carton: a fixed number of slots, decided the moment you build it. A 6-slot carton always holds exactly 6 eggs — you can't suddenly fit a 7th. In real programs you often <em>don't know</em> how many things you'll have: a to-do list, players who join a game, messages in a chat. They grow and shrink.</p>
+
+    <p class="body">That's what <strong>collections</strong> are for. An <strong>ArrayList</strong> is like a shopping bag instead of an egg carton — start empty, drop items in as you go, take some out, and it stretches to fit. No fixed size to worry about.</p>
+
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th></th><th>Array</th><th>ArrayList</th></tr>
+      <tr><td>Size</td><td>Fixed when created</td><td>Grows &amp; shrinks anytime</td></tr>
+      <tr class="hl"><td>Add an item</td><td>Can't — size is locked</td><td><code>list.add(x)</code></td></tr>
+      <tr><td>How many?</td><td><code>arr.length</code></td><td><code>list.size()</code></td></tr>
+      <tr class="hl"><td>Get item i</td><td><code>arr[i]</code></td><td><code>list.get(i)</code></td></tr>
+    </table>
+  </div>
+
+  <!-- ── 10.2 CREATING AN ARRAYLIST ── -->
+  <div class="content-section">
+    <div class="section-label">Part 2 — Creating an ArrayList</div>
+
+    <p class="body">ArrayList isn't built into the language the way arrays are — it lives in Java's toolbox, so you <strong>import</strong> it at the top of your file. Then you create one, telling it <em>what type of thing</em> it will hold using angle brackets <code class="il">&lt; &gt;</code> — this is called <strong>generics</strong>. An <code class="il">ArrayList&lt;String&gt;</code> is "a stretchy list of Strings."</p>
+    <pre><code class="language-java">import java.util.ArrayList;     // bring ArrayList in from Java's toolbox
+
+public class Main {
+    public static void main(String[] args) {
+        // an empty, stretchy list that will hold Strings
+        ArrayList&lt;String&gt; pets = new ArrayList&lt;String&gt;();
+
+        pets.add("dog");        // drop items in — the list grows
+        pets.add("cat");
+        pets.add("hamster");
+
+        System.out.println(pets);              // [dog, cat, hamster]
+        System.out.println("Size: " + pets.size());   // 3
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 The &lt;String&gt; keeps your list honest</div>
+      <p>The type in angle brackets means the list only accepts that type — an <code>ArrayList&lt;String&gt;</code> holds Strings and nothing else. Try to add a number and Java stops you before the program even runs. It also means <code>get()</code> hands you back a String directly, no guessing. Printing a list shows its contents in square brackets, just like an array.</p>
+    </div>
+  </div>
+
+  <!-- ── 10.3 CORE METHODS ── -->
+  <div class="content-section">
+    <div class="section-label">Part 3 — The Core ArrayList Methods</div>
+
+    <p class="body">An ArrayList comes with a tidy set of methods for everyday work. Like arrays, positions are <strong>0-based</strong> — the first item is at index 0:</p>
+
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th>Method</th><th>What it does</th></tr>
+      <tr><td><code>add(x)</code></td><td>Append <code>x</code> to the end (list grows)</td></tr>
+      <tr class="hl"><td>get(i)</td><td>Read the item at index <code>i</code></td></tr>
+      <tr><td>set(i, x)</td><td>Replace the item at index <code>i</code> with <code>x</code></td></tr>
+      <tr class="hl"><td>remove(i)</td><td>Delete the item at index <code>i</code> (list shrinks)</td></tr>
+      <tr><td>size()</td><td>How many items right now</td></tr>
+      <tr class="hl"><td>contains(x)</td><td>Is <code>x</code> in the list? (true/false)</td></tr>
+    </table>
+
+    <pre><code class="language-java">import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList&lt;String&gt; todo = new ArrayList&lt;String&gt;();
+        todo.add("brush teeth");
+        todo.add("walk dog");
+        todo.add("homwork");          // oops, typo
+
+        todo.set(2, "homework");      // fix index 2
+        System.out.println("Get index 1: " + todo.get(1));   // walk dog
+        System.out.println("Has 'walk dog'? " + todo.contains("walk dog"));
+
+        todo.remove(0);               // done brushing — remove it
+        System.out.println(todo);                 // [walk dog, homework]
+        System.out.println("Left: " + todo.size());   // 2
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ remove shifts everything after it</div>
+      <p>When you <code>remove(0)</code>, every later item slides down one spot to fill the gap — what was at index 1 becomes index 0. So be careful removing items <em>while</em> looping forward by index, or you can skip elements. (A for-each loop avoids this when you're only reading.)</p>
+    </div>
+  </div>
+
+  <!-- ── 10.4 LOOPING ── -->
+  <div class="content-section">
+    <div class="section-label">Part 4 — Looping Over a List</div>
+
+    <p class="body">You loop over an ArrayList just like an array. The <strong>for-each</strong> loop is cleanest when you just want each item; the <strong>indexed</strong> loop is handy when you also need the position number:</p>
+    <pre><code class="language-java">import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList&lt;String&gt; players = new ArrayList&lt;String&gt;();
+        players.add("Mia");
+        players.add("Leo");
+        players.add("Ava");
+
+        // for-each: "for each name in players"
+        for (String name : players) {
+            System.out.println("Player: " + name);
+        }
+
+        System.out.println("---");
+
+        // indexed: when you want the position too
+        for (int i = 0; i < players.size(); i++) {
+            System.out.println((i + 1) + ". " + players.get(i));
+        }
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 size(), not length</div>
+      <p>The classic mix-up: arrays use <code>arr.length</code> (a field, no parentheses), but an ArrayList uses <code>list.size()</code> (a method, with parentheses). And to read an item it's <code>list.get(i)</code>, not <code>list[i]</code>. Different containers, slightly different controls.</p>
+    </div>
+  </div>
+
+  <!-- ── 10.5 WRAPPER TYPES ── -->
+  <div class="content-section">
+    <div class="section-label">Part 5 — Lists of Numbers: Wrapper Types</div>
+
+    <p class="body">Here's a small quirk. Collections only hold <strong>objects</strong>, but <code class="il">int</code>, <code class="il">double</code>, and <code class="il">boolean</code> are <em>not</em> objects — they're simple "primitive" types (Lesson 1). So for a list of whole numbers you use the object version of <code class="il">int</code>, called <code class="il">Integer</code>, in the angle brackets. The good news: Java converts back and forth for you automatically, so you mostly just write plain numbers.</p>
+    <pre><code class="language-java">import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList&lt;Integer&gt; scores = new ArrayList&lt;Integer&gt;();  // Integer, not int
+        scores.add(90);     // you write 90; Java wraps it as an Integer for you
+        scores.add(75);
+        scores.add(88);
+
+        int total = 0;
+        for (int s : scores) {       // and unwraps it back to int here
+            total += s;
+        }
+        double avg = (double) total / scores.size();
+        System.out.println("Total: " + total + ", Average: " + avg);
+    }
+}</code></pre>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ Use the wrapper names in &lt; &gt;</div>
+      <p>Inside the angle brackets you need the object names: <code>Integer</code> (not <code>int</code>), <code>Double</code> (not <code>double</code>), <code>Boolean</code> (not <code>boolean</code>). <code>String</code> already is an object, so it stays as-is. This automatic wrapping/unwrapping is called <em>autoboxing</em> — a fancy word for "Java handles the conversion so you don't have to."</p>
+    </div>
+  </div>
+
+  <!-- ── 10.6 HASHMAP ── -->
+  <div class="content-section">
+    <div class="section-label">Part 6 — HashMap: Looking Things Up by Name</div>
+
+    <p class="body">An ArrayList finds things by <em>number</em> (index 0, 1, 2...). But sometimes you want to look something up by a <strong>name</strong> instead — like a real dictionary, where you look up a <em>word</em> to get its <em>definition</em>. That's a <strong>HashMap</strong>: it stores <strong>key → value</strong> pairs. Give it a key, it hands back the matching value, instantly.</p>
+    <pre><code class="language-java">import java.util.HashMap;
+
+public class Main {
+    public static void main(String[] args) {
+        // keys are Strings (names), values are Integers (ages)
+        HashMap&lt;String, Integer&gt; ages = new HashMap&lt;String, Integer&gt;();
+
+        ages.put("Mia", 12);        // put a key -> value pair in
+        ages.put("Leo", 13);
+        ages.put("Ava", 11);
+
+        System.out.println("Leo is " + ages.get("Leo"));        // look up by key -> 13
+        System.out.println("Has Mia? " + ages.containsKey("Mia"));   // true
+        System.out.println("Has Sam? " + ages.containsKey("Sam"));   // false
+    }
+}</code></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 Two types in the brackets</div>
+      <p>A HashMap needs <strong>two</strong> types: <code>HashMap&lt;String, Integer&gt;</code> means "keys are Strings, values are Integers." <code>put(key, value)</code> adds a pair, and <code>get(key)</code> fetches the value for that key. Each key is unique — <code>put</code> with a key that already exists just updates its value.</p>
+    </div>
+
+    <h3 class="topic">Looping Over a HashMap</h3>
+    <p class="body">To visit every pair, loop over the keys with <code class="il">keySet()</code>, then use each key to <code class="il">get()</code> its value:</p>
+    <pre><code class="language-java">import java.util.HashMap;
+
+public class Main {
+    public static void main(String[] args) {
+        HashMap&lt;String, Integer&gt; ages = new HashMap&lt;String, Integer&gt;();
+        ages.put("Mia", 12);
+        ages.put("Leo", 13);
+
+        for (String name : ages.keySet()) {       // for each key...
+            System.out.println(name + " is " + ages.get(name));   // ...get its value
+        }
+    }
+}</code></pre>
+  </div>
+
+  <!-- ── 10.7 CHOOSING ── -->
+  <div class="content-section">
+    <div class="section-label">Part 7 — Which One Should I Use?</div>
+
+    <p class="body">You now know three containers. Picking the right one is a real skill — here's the quick guide:</p>
+
+    <table class="data-table" style="margin-top:8px;">
+      <tr><th>Use this</th><th>When you…</th><th>Example</th></tr>
+      <tr><td><strong>Array</strong></td><td>Know the exact size up front and it won't change</td><td>The 7 days of the week</td></tr>
+      <tr class="hl"><td><strong>ArrayList</strong></td><td>Have an ordered list that grows/shrinks</td><td>A to-do list, players in a game</td></tr>
+      <tr><td><strong>HashMap</strong></td><td>Look things up by a name/key, not a position</td><td>Username &rarr; score, word &rarr; definition</td></tr>
+    </table>
+
+    <p class="body">A good question to ask yourself: <em>"How will I find my data again?"</em> If by position number, a list. If by a label, a map. If you'll never resize it, a plain array is fine.</p>
+
+    <!-- Interactive Demo: ArrayList Playground -->
+    <div class="demo-wrap" style="margin-top:24px;">
+      <div class="demo-header">
+        <div class="demo-dot" style="background:#6366f1"></div>
+        <div class="demo-dot" style="background:#f59e0b;margin-left:4px"></div>
+        <div class="demo-dot" style="background:#10b981;margin-left:4px"></div>
+        <span class="label" style="margin-left:8px">Interactive — ArrayList Playground</span>
+      </div>
+      <div class="demo-body">
+        <p>Run operations on a live <code>ArrayList&lt;String&gt;</code> and watch it grow and shrink. Try add, then remove, then get — see how <code>size()</code> and the indexes change.</p>
+        <div class="form-row">
+          <select class="demo-select" id="al-op">
+            <option value="add">add(value)</option>
+            <option value="remove">remove(index)</option>
+            <option value="get">get(index)</option>
+            <option value="set">set(index, value)</option>
+            <option value="clear">clear()</option>
+          </select>
+          <input class="demo-input" id="al-arg" type="text" value="dog" placeholder="value or index" style="width:120px"/>
+          <button class="run-btn" onclick="runListDemo()">Run op ▶</button>
+          <button class="run-btn" style="background:#6b7280" onclick="resetListDemo()">Reset</button>
+        </div>
+        <div class="demo-result" id="al-result">List starts empty: []  (size 0) — pick an operation and click Run op.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COURSE WRAP ── -->
+  <div class="content-section">
+    <div class="content-section" style="margin-bottom:0;">
+      <div class="callout info">
+        <div class="callout-title">🎉 You finished the course!</div>
+        <p>Ten weeks: from variables and types, through loops, methods, and recursion, into building your own classes with inheritance, and now the collections that power real programs. You've got the full toolkit of Java basics. The best next step is to <strong>build something</strong> — a quiz game, a contact book, a score tracker — using exactly these pieces. Keep going!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE ── -->
+  <div class="content-section">
+    <div class="section-label">Exercise — 15 Minutes</div>
+    <div class="exercise-header">
+      <span class="ex-icon">⌨️</span>
+      <span class="ex-label">Coding Challenge</span>
+      <span class="ex-time">⏱ ~15 min</span>
+    </div>
+    <div class="exercise-section">
+
+      <div class="exercise-task">
+        <p><strong>Task 1 — A grocery list</strong><br/>
+        Create an <code>ArrayList&lt;String&gt;</code>, add three groceries, remove the first one, then print the list and its <code>size()</code>. Don't forget the <code>import</code> at the top!</p>
+        <p style="font-size:.82rem;color:#6b7280;margin-top:6px;"><em>Hint: <code>import java.util.ArrayList;</code> goes above <code>public class Main</code>.</em></p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h10-1')">Show hint</button>
+      <div class="hint-box" id="h10-1">
+        <p><code>ArrayList&lt;String&gt; groceries = new ArrayList&lt;String&gt;();</code> then <code>groceries.add("milk");</code> three times, <code>groceries.remove(0);</code>, then <code>System.out.println(groceries);</code> and <code>System.out.println(groceries.size());</code>.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 2 — Sum a list of numbers</strong><br/>
+        Make an <code>ArrayList&lt;Integer&gt;</code> with the values 10, 20, and 30. Loop over it with a for-each, add them up, and print the total (should be 60).</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h10-2')">Show hint</button>
+      <div class="hint-box" id="h10-2">
+        <p>Remember the wrapper type: <code>ArrayList&lt;Integer&gt; nums = new ArrayList&lt;Integer&gt;();</code>. Add the numbers, then <code>int total = 0; for (int n : nums) { total += n; }</code> and print <code>total</code>.</p>
+      </div>
+
+      <div class="exercise-task" style="margin-top:16px">
+        <p><strong>Task 3 — A phone book (HashMap)</strong><br/>
+        Use a <code>HashMap&lt;String, String&gt;</code> to store three names mapped to phone numbers. Then look up one name with <code>get()</code> and print the result, and check <code>containsKey()</code> for a name that isn't there.</p>
+      </div>
+      <button class="hint-toggle" onclick="toggleHint('h10-3')">Show hint</button>
+      <div class="hint-box" id="h10-3">
+        <p><code>import java.util.HashMap;</code> at the top. Then <code>HashMap&lt;String, String&gt; book = new HashMap&lt;String, String&gt;();</code>, <code>book.put("Mia", "555-1234");</code>, and <code>System.out.println(book.get("Mia"));</code>. Try <code>book.containsKey("Zoe")</code> — it returns false.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div class="content-section quiz-section">
+    <div class="section-label">Quick Check — 6 Questions</div>
+    <div class="q-list">
+
+      <div class="q-item">
+        <h4>1. What's the main advantage of an <strong>ArrayList</strong> over an array?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">It can only hold numbers</button>
+          <button class="q-opt" onclick="qa(this,true)">It can grow and shrink — no fixed size</button>
+          <button class="q-opt" onclick="qa(this,false)">It is always faster</button>
+          <button class="q-opt" onclick="qa(this,false)">It doesn't need a type</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>2. Which method adds an item to the end of an ArrayList?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,true)"><code>add(x)</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>push(x)</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>insert(x)</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>new(x)</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>3. How do you find how many items are in an ArrayList?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>list.length</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>list.size()</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>list.count</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>list.length()</code></button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>4. For a list of whole numbers, what goes in the angle brackets?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)"><code>ArrayList&lt;int&gt;</code></button>
+          <button class="q-opt" onclick="qa(this,true)"><code>ArrayList&lt;Integer&gt;</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>ArrayList&lt;number&gt;</code></button>
+          <button class="q-opt" onclick="qa(this,false)"><code>ArrayList&lt;&gt;</code> only</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>5. A <strong>HashMap</strong> stores data as…</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">A fixed-size row of slots</button>
+          <button class="q-opt" onclick="qa(this,true)">key → value pairs you look up by key</button>
+          <button class="q-opt" onclick="qa(this,false)">Only numbers in order</button>
+          <button class="q-opt" onclick="qa(this,false)">A single piece of text</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+      <div class="q-item">
+        <h4>6. You want to look up a student's score by their name. Best choice?</h4>
+        <div class="q-opts">
+          <button class="q-opt" onclick="qa(this,false)">A plain array</button>
+          <button class="q-opt" onclick="qa(this,false)">An ArrayList</button>
+          <button class="q-opt" onclick="qa(this,true)">A HashMap (name → score)</button>
+          <button class="q-opt" onclick="qa(this,false)">A single int variable</button>
+        </div>
+        <div class="q-fb"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /lesson-content -->
